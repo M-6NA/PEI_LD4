@@ -1,0 +1,4 @@
+# .gitignore
+
+# Ignore the PEI_LD4_SL directory
+PEI_LD4_LIBS_3/

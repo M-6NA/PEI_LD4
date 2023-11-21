@@ -7,14 +7,14 @@ from PIL import Image
 
 # :::::::::::::::::::::::::::::::::: PAGE CONFIGURATION :::::::::::::::::::::::::::::::::: 
 # Settings for the webpage
-st.set_page_config(
+st.set_page_config( 
     page_title = "Home",
     layout = "wide",
     page_icon = ":tangerine:",
 
 )
 
-st.sidebar.image('images/orange_icon_2.png', use_column_width=True)
+# st.sidebar.image('images/orange_icon_2.png', use_column_width=True)
 
 
 # Title for the page
@@ -23,113 +23,131 @@ st.divider()
 
 # :::::::::::::::::::::::::::::::::: DATA PLOTS AND TABLES :::::::::::::::::::::::::::::::::: 
 
-# ::::::::::::::::: PLOTLY WORLD MAP ::::::::::::::::: 
-# st.title("World Map")
-st.subheader("Worldwide suppliers")
+# # ::::::::::::::::: PLOTLY WORLD MAP ::::::::::::::::: 
 
-# :::::::::::::: OLD MAP PLOT ::::::::::::::  
+def supply_world_map():
 
-# fig = go.Figure(go.Scattergeo())
-# fig.update_geos(
-#     showcountries = True,
-#     projection_type="natural earth"
-#     # projection_type = "orthographic"
+    st.subheader("Worldwide Suppliers")
 
-# )
-# fig.update_layout(height = 400, margin={"r":0,"t":0,"l":0,"b":0})
+    def display_world_map(data_df):
+        # Create a DataFrame
+        map_df = pd.DataFrame(data_df)
 
-# st.plotly_chart(fig, use_container_width=True)
+        # Assigning colors to different supplies
+        supply_colors = {
+            "Pack": "#6a4c93",
+            "PET": "#1982c4",
+            "Orange": "#fb8500",
+            "Mango": "#8ac926",
+            "Vitamin C": "#ff595e"
+        }
 
-# :::::::::::::: NEW MAP PLOT ::::::::::::::  
-data = {
-    "Name": [
-        "Quick Pack", "Poly", "Grande", "Squeeze", "Mrs Mango",
-        "Domanga", "CC best", "C plus"
-    ],
-    "Supply": [
-        "Pack", "PET", "Orange", "Orange", "Mango",
-        "Mango", "Vitamin C", "Vitamin C"
-    ],
-    "Country": [
-        "Germany", "Italy", "USA", "Brazil", "Brazil",
-        "Spain", "India", "France"
-    ],
-    "Qlty": [
-        "Middle", "High", "High", "Middle", "Middle",
-        "Middle", "High", "Middle"
-    ],
-    "ADR": [93, 95, 98, 95, 93, 93, 99, 93],
-    "Latitude": [
-        51.1657, 41.8719, 37.0902, -14.235, -20.5,  # Increased latitude difference
-        40.4637, 20.5937, 46.6033
-    ],
-    "Longitude": [
-        10.4515, 12.5674, -95.7129, -51.9253, -51.9253,
-        -3.7492, 78.9629, 1.8883
-    ]
-}
+        # Plotly figure setup
+        fig = go.Figure()
 
-# Create a DataFrame
-df = pd.DataFrame(data)
-
-# Assigning colors to different supplies
-supply_colors = {
-    "Pack": "#6a4c93",
-    "PET": "#1982c4",
-    "Orange": "#fb8500",
-    "Mango": "#8ac926",
-    "Vitamin C": "#ff595e"
-}
-
-# Plotly figure setup
-fig = go.Figure(go.Scattergeo())
-
-# Update geos and layout
-fig.update_geos(
-    showcountries=True,
-    projection_type="natural earth",
-    # projection_type = "orthographic",
-)
-fig.update_layout(height=600, margin={"r": 0, "t": 0, "l": 0, "b": 0})
-
-# Plot each product on the map
-for index, row in df.iterrows():
-    text = f"Name: {row['Name']}<br>" \
-           f"Supply: {row['Supply']}<br>" \
-           f"Country: {row['Country']}<br>" \
-           f"Qlty: {row['Qlty']}<br>" \
-           f"ADR(%): {row['ADR']}%"
-
-    fig.add_trace(
-        go.Scattergeo(
-            lon=[row['Longitude']],  # Longitude of the country
-            lat=[row['Latitude']],   # Latitude of the country
-            text=text,
-            mode="markers",
-            marker=dict(
-                size=10,
-                color=supply_colors.get(row['Supply'], "grey"),  # Assign color based on supply
-                opacity=0.7,
-                symbol="circle"
-            ),
-            name=row['Name']
+        # Update geos and layout
+        fig.update_geos(
+            showcountries=True,
+            projection_type="natural earth",
+            # projection_type = "orthographic",
         )
-    )
+        fig.update_layout(height=600, margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
-    fig.update_layout(
-        height=600,
-        margin={"r": 0, "t": 0, "l": 0, "b": 0},
-        legend=dict(
-            yanchor="bottom",
-            y=0.05  # Adjust this value to move the legend further down (0.05 moves it down slightly)
+        fig.update_layout(
+            legend=dict(
+                orientation='h',    # Horizontal orientation
+                yanchor='bottom',   # Anchor to bottom of the plot
+                y=1.05,             # Adjust this value to position the legend further down
+                xanchor='left',     # Anchor to right side
+                x=0                 # Anchor to right side of the plot
+            )
         )
-    )
 
-# Display the map
-st.plotly_chart(fig, use_container_width=True)
+        # Add a dot for the Netherlands
+        fig.add_trace(
+            go.Scattergeo(
+                lon=[4.8952],  # Longitude of the Netherlands
+                lat=[52.3676],  # Latitude of the Netherlands
+                text="Netherlands",
+                mode="markers",
+                marker=dict(
+                    size=10,
+                    color='blue',  # Color of the Netherlands dot
+                    opacity=0.7,
+                    symbol="circle"
+                ),
+                name="Netherlands"
+            )
+        )
+
+        # Plot each product on the map and add arrows to the Netherlands
+        for index, row in map_df.iterrows():
+
+            # Add arrows from each location to the Netherlands
+            fig.add_trace(
+                go.Scattergeo(
+                    lon=[row['Longitude'], 4.8952],
+                    lat=[row['Latitude'], 52.3676],
+                    mode='lines',
+                    line=dict(width=2, color='rgba(255, 0, 110, 0.3)', dash='dashdot'),
+                    showlegend=False
+                )
+            )
+
+            
+            text_sup = f"Name: {row['Name']}<br>" \
+                    f"Supply: {row['Supply']}<br>" \
+                    f"Country: {row['Country']}<br>" \
+                    f"Qlty: {row['Qlty']} <br>"\
+                    f"Deliveries: {row['Deliveries']}<br>"\
+                    f"AVG order size: {row['AVG_order_size']}<br>"\
+                    f"TansP mode: {row['TransP_mode']}<br>"\
+                    f"Trade unit: {row['Trade_unit']}<br>"
+
+            fig.add_trace(
+                go.Scattergeo(
+                    lon=[row['Longitude']],
+                    lat=[row['Latitude']],
+                    text=text_sup,
+                    mode="markers",
+                    marker=dict(
+                        size=10,
+                        color=supply_colors.get(row['Supply'], "grey"),
+                        opacity=0.7,
+                        symbol="circle"
+                    ),
+                    name=row['Name']
+                )
+            )
 
 
+        # Display the map
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+    
+    added_sup_df = pd.read_excel('Data/Suppliers.xlsx')
 
+    round_0_data = added_sup_df[added_sup_df['Round'] == 0]
+    round_1_data = added_sup_df[added_sup_df['Round'] == 1]
+    round_2_data = added_sup_df[added_sup_df['Round'] == 2]
+    round_3_data = added_sup_df[added_sup_df['Round'] == 3]
+ 
+    
+    # Displaying the maps in tabs for each round
+    tab1, tab2, tab3, tab4 = st.tabs(["Round 0", "Round 1", "Round 2", "Round 3"])
+    
+    with tab1:
+        display_world_map(round_0_data)
+
+    with tab2:
+        display_world_map(round_1_data)
+
+    with tab3:
+        display_world_map(round_2_data)
+
+    with tab4:
+        display_world_map(round_3_data)
+
+supply_world_map()
 
 # ::::::::::::::::: DEMAND & DELIVERY SECTION :::::::::::::::::   
 def demand_delivery_section():
@@ -311,8 +329,8 @@ def production_section():
             st.markdown(
                 f"""
                 <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
-                    <div style="margin-bottom: -35px;"><h3>AVG Startup Loss:</h3></div>
-                    <div style="margin-top: 0;"><h2 style="margin-top: -15px; font-weight: bold;">{formatted_startup_loss}</h2></div>
+                    <div style="margin-bottom: -35px;"><h3 style = "color: black;">AVG Startup Loss:</h3></div>
+                    <div style="margin-top: 0;"><h2 style="margin-top: -15px; font-weight: bold; color: black;">{formatted_startup_loss}</h2></div>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -324,8 +342,8 @@ def production_section():
             st.markdown(
                 f"""
                 <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
-                    <div style="margin-bottom: -35px;"><h3>Total Obsololetes:</h3></div>
-                    <div style="margin-top: 0;"><h2 style="margin-top: -15px; font-weight: bold;">{formatted_obsoletes}</h2></div>
+                    <div style="margin-bottom: -35px;"><h3 style = "color: black;">Total Obsololetes:</h3></div>
+                    <div style="margin-top: 0;"><h2 style="margin-top: -15px; font-weight: bold; color: black;">{formatted_obsoletes}</h2></div>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -336,8 +354,8 @@ def production_section():
             st.markdown(
                 f"""
                 <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
-                    <div style="margin-bottom: -35px;"><h3>Total Rejected:</h3></div>
-                    <div style="margin-top: 0;"><h2 style="margin-top: -15px; font-weight: bold;">{formatted_rejections}</h2></div>
+                    <div style="margin-bottom: -35px;"><h3 style = "color: black;">Total Rejected:</h3></div>
+                    <div style="margin-top: 0;"><h2 style="margin-top: -15px; font-weight: bold; color: black;">{formatted_rejections}</h2></div>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -392,7 +410,10 @@ def products_section():
     st.divider()
     st.subheader("Products")
     products_df = pd.read_csv('Data/Products_(1).csv', delimiter = ';')
-    products_df = products_df[:-3] # Droping the last 3 rows (Outliers)
+    products_df = products_df[:-3]      # Droping the last 3 rows (Outliers)
+    products_df['AmountWater'] = products_df['AmountWater'].str.replace(',', '.')   # Changing the , to . for numbers
+    products_df['AmountWater'] = products_df['AmountWater'].astype(float)
+
     with st.expander("Products data preview"):
         st.write(products_df)
         
@@ -413,9 +434,9 @@ def products_section():
             orange_amount = round(filtered_product['AmountOrange'].values[0] * 100, 2)
             mango_amount = round(filtered_product['AmountMango'].values[0] * 100, 2)
             vitamin_c_amount = round(filtered_product['AmountVitaminC'].values[0] * 100, 2)
-            water_amount = filtered_product['AmountWater'].values[0]
+            water_amount = round(filtered_product['AmountWater'].values[0]* 100,2)
         
-            sales_price_retail = filtered_product['SalesPriceRetail'].values[0]
+            sales_price_retail = round(filtered_product['SalesPriceRetail'].values[0]* 10, 2)
 
         col1, col2, col3, col4 = st.columns([0.05, 0.45, 0.45, 0.05], gap = "small")
 
@@ -437,12 +458,12 @@ def products_section():
                 st.code(f"Liters Per Pack: {liters_per_pack}")
 
             with col_32:
-                st.code(f"Amount of Orange: {orange_amount}%")
-                st.code(f"Amount of Mango: {mango_amount}%")
-                st.code(f"Amount of Vitamin C: {vitamin_c_amount}%")
-                st.code(f"Amount of Water: {water_amount}%")
+                st.code(f"Amount of Orange: {orange_amount} ml")
+                st.code(f"Amount of Mango: {mango_amount} ml")
+                st.code(f"Amount of Vitamin C: {vitamin_c_amount} ml")
+                st.code(f"Amount of Water: {water_amount} ml")
 
-            st.code(f"Sales Price: {sales_price_retail}")
+            st.code(f"Sales Price: ${sales_price_retail}")
 
 
         with col4:

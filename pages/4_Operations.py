@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # Image for the sidebar
-st.sidebar.image('images/orange_icon_2.png', use_column_width=True)
+# st.sidebar.image('images/orange_icon_2.png', use_column_width=True)
 
 # Title for the page
 st.title("Operations")
