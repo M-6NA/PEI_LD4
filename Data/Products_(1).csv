@@ -1,0 +1,10 @@
+"ProductID";"ProductName";"ShelfLifeInWeeks";"NumberPerOuterBox";"NumberPerPalletLayer";"NumberPerPallet";"LitersPerPack";"SalesPriceRetail";"AmountOrange";"AmountMango";"AmountVitaminC";"AmountWater";"ValidFrom";"ValidTo"
+1;"Fressie Orange 1 liter";16;10;120;600;1;0.5;0.2;0;0;"0,8";2018-01-01;NA
+3;"Fressie Orange/Mango 1 liter";16;10;120;600;1;0.52;0.15;0.05;0;"0,8";2018-01-01;NA
+41;"Fressie Orange/C-power PET";16;48;576;2880;0.3;0.35;0.05;0;0.01;"0,24";2018-01-01;NA
+411;"Fressie Orange PET";16;48;576;2880;0.3;0.24;0.06;0;0;"0,24";2018-01-01;NA
+413;"Fressie Orange/Mango PET";16;48;576;2880;0.3;0.28;0.04;0.02;0;"0,24";2018-01-01;NA
+502;"Fressie Orange/Mango+C 1L";16;10;120;600;1;0.6;0.14;0.05;0.01;"0,8";2018-01-01;NA
+1;"Fressie Orange 1 liter";16;10;120;600;1;0.5;0.15;0;0;"0,85";2017-01-01;2017-12-31
+3;"Fressie Orange/Mango 1 liter";16;10;120;600;1;0.52;0.1;0.05;0;"0,85";2017-01-01;2017-12-31
+502;"Fressie Orange/Mango+C 1L";16;10;120;600;1;0.6;0.09;0.05;0.01;"0,85";2017-01-01;2017-12-31
