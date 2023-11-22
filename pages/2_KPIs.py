@@ -8,7 +8,7 @@ import pandas as pd
 # :::::::::::::::::::::::::::::::::: PAGE CONFIGURATION :::::::::::::::::::::::::::::::::: 
 # Settings for the webpage
 st.set_page_config(
-    page_title = "Home",
+    page_title = "KPI's",
     layout = "wide",
     page_icon = ":tangerine:",
 

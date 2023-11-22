@@ -7,7 +7,7 @@ import pandas as pd
 # :::::::::::::::::::::::::::::::::: PAGE CONFIGURATION :::::::::::::::::::::::::::::::::: 
 # Settings for the webpage
 st.set_page_config(
-    page_title = "Home",
+    page_title = "Purchasing",
     layout = "wide",
     page_icon = ":tangerine:",
 
