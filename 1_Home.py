@@ -494,7 +494,6 @@ def products_section():
 
 products_section()
 
-
 # ::::::::::::::::: PENALTIES PER CUSTOMER SECTION :::::::::::::::::  
 def penalties_section():
     st.divider()
