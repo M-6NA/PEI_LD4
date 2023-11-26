@@ -93,30 +93,57 @@ def supply_world_map():
             )
 
             
-            text_sup = f"Name: {row['Name']}<br>" \
-                    f"Supply: {row['Supply']}<br>" \
-                    f"Country: {row['Country']}<br>" \
-                    f"Qlty: {row['Qlty']} <br>"\
-                    f"Deliveries: {row['Deliveries']}<br>"\
-                    f"AVG order size: {row['AVG_order_size']}<br>"\
-                    f"TansP mode: {row['TransP_mode']}<br>"\
-                    f"Trade unit: {row['Trade_unit']}<br>"
 
-            fig.add_trace(
-                go.Scattergeo(
-                    lon=[row['Longitude']],
-                    lat=[row['Latitude']],
-                    text=text_sup,
-                    mode="markers",
-                    marker=dict(
-                        size=10,
-                        color=supply_colors.get(row['Supply'], "grey"),
-                        opacity=0.7,
-                        symbol="circle"
-                    ),
-                    name=row['Name']
+        added_supplies = {}
+
+        for index, row in map_df.iterrows():
+            supply = row['Supply']
+            
+            # Check if the supply has already been added to the legend
+            if supply not in added_supplies:
+                added_supplies[supply] = True  # Mark the supply as added
+                
+                text_sup = f"Name: {row['Name']}<br>" \
+                            f"Supply: {row['Supply']}<br>" \
+                            f"Country: {row['Country']}<br>" \
+                            f"Qlty: {row['Qlty']} <br>"\
+                            f"Deliveries: {row['Deliveries']}<br>"\
+                            f"AVG order size: {row['AVG_order_size']}<br>"\
+                            f"TansP mode: {row['TransP_mode']}<br>"\
+                            f"Trade unit: {row['Trade_unit']}<br>"
+
+                fig.add_trace(
+                    go.Scattergeo(
+                        lon=[row['Longitude']],
+                        lat=[row['Latitude']],
+                        text=text_sup,
+                        mode="markers",
+                        marker=dict(
+                            size=10,
+                            color=supply_colors.get(row['Supply'], "grey"),
+                            opacity=0.7,
+                            symbol="circle"
+                        ),
+                        name=row['Supply']  # Use the supply instead of row['Name']
+                    )
                 )
-            )
+            else:
+                # Add a trace without adding to the legend for subsequent occurrences of the same supply
+                fig.add_trace(
+                    go.Scattergeo(
+                        lon=[row['Longitude']],
+                        lat=[row['Latitude']],
+                        text=text_sup,
+                        mode="markers",
+                        marker=dict(
+                            size=10,
+                            color=supply_colors.get(row['Supply'], "grey"),
+                            opacity=0.7,
+                            symbol="circle"
+                        ),
+                        showlegend=False  # Do not add to legend
+                    )
+                )
 
 
         # Display the map
