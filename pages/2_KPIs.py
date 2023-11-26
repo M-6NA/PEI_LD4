@@ -1,8 +1,12 @@
 import streamlit as st
 import os
+import random
+
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.colors as pc
 import pandas as pd
+
 
 
 # :::::::::::::::::::::::::::::::::: PAGE CONFIGURATION :::::::::::::::::::::::::::::::::: 
@@ -37,12 +41,60 @@ def read_table_tabs(sheet_name):
 
 # :::::::::::::::::::::::::::::::::: DATA PLOTS AND TABLES :::::::::::::::::::::::::::::::::: 
 # :::::::::::::::: PURCHASING SECTION ::::::::::::::::  
-st.subheader("Generic")
+st.subheader("Generic information")
 
-st.text("- ROI%")
-st.text("- Gross Margin (customer)")
-st.text("- Obsoloete products(%)")
-st.text("- Service level outbound order lines")
+def generic_section():
+
+    finance_df = pd.read_excel('Data/FinanceReport.xlsx')
+    with st.expander("Finance Report data preview"):
+        st.write(finance_df)
+
+    def finance_plot(val):
+
+        main_df = finance_df.copy().T.reset_index()
+        main_df.columns = main_df.iloc[0]  # Set the first row as column names
+        main_df = main_df.drop([0, 1])  # Drop the first two rows
+
+        main_df = main_df[['Round', val]]  # Select the 'Round' and the specified value column
+        main_df.columns = ['Round', val]  # Rename the columns for clarity
+
+        main_df['Round'] = pd.to_numeric(main_df['Round'])
+        main_df[val] = pd.to_numeric(main_df[val])
+
+        if val == "ROI":
+            main_df[val] = pd.to_numeric(main_df[val])*100
+    
+        # Generate a random color sequence
+        color_palette = random.sample(px.colors.qualitative.Plotly, 4)
+
+        fig = px.line(
+            main_df, 
+            x='Round', 
+            y=val, 
+            title=f'{val} over Rounds', 
+            color_discrete_sequence=color_palette
+        )
+
+        fig.update_layout(height=300)
+
+        st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+
+    col1, col2 = st.columns(2, gap = "small")
+
+    with col1:
+        finance_plot("ROI")
+        finance_plot("Operating profit")
+
+    with col2:
+        finance_plot("Gross margin")
+        finance_plot("Investment")
+
+generic_section()
+
+# st.text("- ROI%")
+# st.text("- Gross Margin (customer)")
+# st.text("- Obsoloete products(%)")
+# st.text("- Service level outbound order lines")
 
 st.divider()
 
@@ -95,10 +147,10 @@ st.text("- Cube utilization raw materials warehouse")
 st.text("- Cube utilization finished goods warehouse")
 st.text("- Product plan adherence")
 
-st.text("- Bottling line table")
-st.text("- Mixers table")
-st.text("- Warehosue salesarea table")
-st.text("- Product table")
+read_table_tabs('Bottling line')
+read_table_tabs('Mixers')
+read_table_tabs('Warehouse, Salesarea')
+read_table_tabs('Product')
 
 st.divider()
 
@@ -109,10 +161,15 @@ st.text("- Gross margin (customer)")
 st.text("- Obsolete products(%)")
 st.text("- Service level outbound order lines")
 
-st.text("- Customer table")
-st.text("- Customer Product table")
-st.text("- Salesarea Customer Production table")
-st.text("- Distributor table")
+read_table_tabs('Customer')
+read_table_tabs('Customer - Product')
+read_table_tabs('Salesarea - Customer - Product')
+read_table_tabs('Distributor')
+
+# st.text("- Customer table")
+# st.text("- Customer Product table")
+# st.text("- Salesarea Customer Production table")
+# st.text("- Distributor table")
 
 st.divider()
 
@@ -123,16 +180,15 @@ st.text("- Availability components (%)")
 st.text("- Stock components (weeks)")
 st.text("- Stock products (week)")
 
-st.text("- Component table")
-st.text("- Supplier Component table")
-st.text("- Product warehouse table")
-st.text("- Distributor table")
+read_table_tabs('Component')
+read_table_tabs('Supplier - Component')
+read_table_tabs('Product - Warehouse')
+read_table_tabs('Distributor')
+
+# st.text("- Component table")
+# st.text("- Supplier Component table")
+# st.text("- Product warehouse table")
+# st.text("- Distributor table")
 
 st.divider()
 
-# :::::::::::::::: FINANCES SECTION :::::::::::::::: 
-st.subheader("Finances")
-
-st.text("- Some finances KPI's")
-
-st.divider()

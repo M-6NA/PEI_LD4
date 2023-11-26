@@ -55,7 +55,10 @@ def read_table_tabs(tab_name):
 
 
 # :::::::::::::::::::::::::::::::::: DATA PLOTS AND TABLES :::::::::::::::::::::::::::::::::: 
+
+# ::::::::::::::::: TABLE CONSTANTS FOR THE OPERATIONS PLOTS :::::::::::::::::
 WAREH_SALES_AREA_DF = read_table_tabs('Warehouse, Salesarea')
+PRODUCT_WAREH_DF = read_table_tabs('Product - Warehouse')
 MIXERS_DF = read_table_tabs('Mixers')
 BOTTLING_LINE_DF = read_table_tabs('Bottling line')
 PRODUCTS_DF = read_table_tabs('Product')
@@ -63,6 +66,9 @@ PRODUCTS_DF = read_table_tabs('Product')
 # ::::::::::::::::: CUBE UTILIZATION ::::::::::::::::: 
 
 def warehouse_info_section():
+
+    st.divider()
+    st.subheader("Warehousing")
 
     # Function for the OVERVIEW TAB
     def cube_util_plot():
@@ -140,8 +146,33 @@ def warehouse_info_section():
                 unsafe_allow_html=True
         )
 
-    st.divider()
-    st.subheader("Cube Utilization")
+    def plot_stock_vs_demand_bars(round_val):
+
+        main_df = PRODUCT_WAREH_DF.copy()
+
+        # Filter main_df by the selected round value
+        filtered_df = main_df[main_df['Round'] == round_val]
+
+        # Create a grouped bar chart using Plotly Express
+        fig = px.bar(filtered_df, x='Product', y=['Demand per week (value)', 'Stock value'],
+                    color_discrete_sequence=px.colors.qualitative.Pastel,
+                    barmode='group',
+                    labels={'Product': 'Product', 'value': 'Value', 'variable': 'Metric'},
+                    title=f'Demand vs Stock Value | Round: {round_val}')
+
+        # Update the layout to place the legend inside the plot
+        fig.update_layout(
+            legend=dict(
+                orientation="h",  # Set the orientation to horizontal
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=0.6
+            )
+        )
+
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
     tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
             "Overview",
             "Round -2",
@@ -162,7 +193,7 @@ def warehouse_info_section():
         st.markdown(
             f"""
             <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%): Round -2</h4></div>
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%) | Round -2</h4></div>
             </div>
             """,
             unsafe_allow_html=True
@@ -177,12 +208,29 @@ def warehouse_info_section():
         with col3:
             plot_cube_util_gauge(-2,'Finished goods warehouse')
 
+        # Products text
+        st.markdown(
+            f"""
+            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: -2</h4></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        col1, col2 = st.columns(2, gap = "small")
+
+        with col1:
+            plot_stock_vs_demand_bars(-2)
+        with col2:
+            st.header("Column 2")
+
     with tab3:
         # Cube utilization text
         st.markdown(
             f"""
             <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%): Round -1</h4></div>
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%) | Round: -1</h4></div>
             </div>
             """,
             unsafe_allow_html=True
@@ -196,13 +244,25 @@ def warehouse_info_section():
             plot_cube_util_gauge(-1,'Tank yard')
         with col3:
             plot_cube_util_gauge(-1,'Finished goods warehouse')
+        
+        # Products text
+        st.markdown(
+            f"""
+            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: -1</h4></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        plot_stock_vs_demand_bars(-1)
 
     with tab4:
         # Cube utilization text
         st.markdown(
             f"""
             <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%): Round 0</h4></div>
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%) | Round: 0</h4></div>
             </div>
             """,
             unsafe_allow_html=True
@@ -217,12 +277,25 @@ def warehouse_info_section():
         with col3:
             plot_cube_util_gauge(0,'Finished goods warehouse')
 
+        
+        # Products text
+        st.markdown(
+            f"""
+            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 0</h4></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        plot_stock_vs_demand_bars(0)
+
     with tab5:
         # Cube utilization text
         st.markdown(
             f"""
             <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%): Round 1</h4></div>
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%) | Round: 1</h4></div>
             </div>
             """,
             unsafe_allow_html=True
@@ -237,12 +310,24 @@ def warehouse_info_section():
         with col3:
             plot_cube_util_gauge(1,'Finished goods warehouse')
 
+        # Products text
+        st.markdown(
+            f"""
+            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 1</h4></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        plot_stock_vs_demand_bars(1)
+
     with tab6:
         # Cube utilization text
         st.markdown(
             f"""
             <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%): Round 2</h4></div>
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%) | Round: 2</h4></div>
             </div>
             """,
             unsafe_allow_html=True
@@ -255,13 +340,25 @@ def warehouse_info_section():
             plot_cube_util_gauge(2,'Tank yard')
         with col3:
             plot_cube_util_gauge(2,'Finished goods warehouse')
+
+        # Products text
+        st.markdown(
+            f"""
+            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 2</h4></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        plot_stock_vs_demand_bars(2)
     
     with tab7:
         # Cube utilization text
         st.markdown(
             f"""
             <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%): Round 3</h4></div>
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%) | Round: 3</h4></div>
             </div>
             """,
             unsafe_allow_html=True
@@ -274,9 +371,62 @@ def warehouse_info_section():
             plot_cube_util_gauge(3,'Tank yard')
         with col3:
             plot_cube_util_gauge(3,'Finished goods warehouse')
-      
+
+        # Products text
+        st.markdown(
+            f"""
+            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 3</h4></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        plot_stock_vs_demand_bars(3)
+
+
+def mixers_fillers_section():
+    st.divider()
+    st.subheader("Mixing and bottling")
+
+    def overview_pie_plot():
+        pass
+
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+            "Overview",
+            "Round -2",
+            "Round -1",
+            "Round 0",
+            "Round 1",
+            "Round 2",
+            "Round 3"
+
+    ])
+
+    with tab1:
+        pass
+    
+    with tab2:
+        pass
+
+    with tab3:
+        pass
+
+    with tab4:
+        pass
+
+    with tab5:
+        pass
+
+    with tab6:
+        pass
+
+    with tab7:
+        pass
 
 warehouse_info_section()
+
+mixers_fillers_section()
 
 
 
