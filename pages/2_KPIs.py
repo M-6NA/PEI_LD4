@@ -53,13 +53,18 @@ def generic_section():
 
         main_df = finance_df.copy().T.reset_index()
         main_df.columns = main_df.iloc[0]  # Set the first row as column names
-        main_df = main_df.drop([0, 1])  # Drop the first two rows
+        main_df = main_df.drop(0)  # Drop the first two rows
+
 
         main_df = main_df[['Round', val]]  # Select the 'Round' and the specified value column
-        main_df.columns = ['Round', val]  # Rename the columns for clarity
+        main_df.columns = ['Round', val]   # Rename the columns for clarity
+
+        # st.write(main_df)
 
         main_df['Round'] = pd.to_numeric(main_df['Round'])
         main_df[val] = pd.to_numeric(main_df[val])
+
+        # st.write(main_df)
 
         if val == "ROI":
             main_df[val] = pd.to_numeric(main_df[val])*100
@@ -72,10 +77,15 @@ def generic_section():
             x='Round', 
             y=val, 
             title=f'{val} over Rounds', 
-            color_discrete_sequence=color_palette
+            color_discrete_sequence=color_palette,
+            line_shape = 'linear',
         )
 
+        
         fig.update_layout(height=300)
+        fig.update_xaxes(tickvals=sorted(main_df['Round']))
+
+        fig.update_traces(line=dict(width=4), mode='lines+markers', marker=dict(size=10))
 
         st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
 

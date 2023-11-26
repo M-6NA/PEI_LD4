@@ -93,7 +93,6 @@ def supply_world_map():
             )
 
             
-
         added_supplies = {}
 
         for index, row in map_df.iterrows():
