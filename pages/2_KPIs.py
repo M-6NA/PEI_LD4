@@ -70,14 +70,14 @@ def generic_section():
             main_df[val] = pd.to_numeric(main_df[val])*100
     
         # Generate a random color sequence
-        color_palette = random.sample(px.colors.qualitative.Plotly, 4)
+        # color_palette = random.sample(px.colors.qualitative.Plotly, 4)
 
         fig = px.line(
             main_df, 
             x='Round', 
             y=val, 
             title=f'{val} over Rounds', 
-            color_discrete_sequence=color_palette,
+            # color_discrete_sequence=color_palette,
             line_shape = 'linear',
         )
 
@@ -85,7 +85,7 @@ def generic_section():
         fig.update_layout(height=300)
         fig.update_xaxes(tickvals=sorted(main_df['Round']))
 
-        fig.update_traces(line=dict(width=4), mode='lines+markers', marker=dict(size=10))
+        fig.update_traces(line=dict(width=4, color = 'orange'), mode='lines+markers', marker=dict(size=8, color = 'grey'))
 
         st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
 

@@ -52,14 +52,14 @@ def generic_section():
             main_df[val] = pd.to_numeric(main_df[val])*100
     
         # Generate a random color sequence
-        color_palette = random.sample(px.colors.qualitative.Plotly, 4)
+        # color_palette = random.sample(px.colors.qualitative.Plotly, 4)
 
         fig = px.line(
             main_df, 
             x='Round', 
             y=val, 
             title=f'{val} over Rounds', 
-            color_discrete_sequence=color_palette,
+            # color_discrete_sequence=color_palette,
             line_shape = 'linear',
         )
 
@@ -67,7 +67,7 @@ def generic_section():
         fig.update_layout(height=300)
         fig.update_xaxes(tickvals=sorted(main_df['Round']))
 
-        fig.update_traces(line=dict(width=4), mode='lines+markers', marker=dict(size=10))
+        fig.update_traces(line=dict(width=4, color = 'orange'), mode='lines+markers', marker=dict(size=8, color = 'grey'))
 
         st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
 
@@ -91,9 +91,9 @@ def supply_world_map():
     st.subheader("Worldwide Suppliers")
 
     def display_world_map(data_df):
-        # Create a DataFrame
+                # Create a DataFrame
         map_df = pd.DataFrame(data_df)
-
+ 
         # Assigning colors to different supplies
         supply_colors = {
             "Pack": "#6a4c93",
@@ -109,8 +109,13 @@ def supply_world_map():
         # Update geos and layout
         fig.update_geos(
             showcountries=True,
-            projection_type="natural earth",
-            # projection_type = "orthographic",
+            projection_type="equirectangular",
+            showcoastlines=True,
+            countrycolor="rgba(0, 0, 0, 0.2)", 
+            coastlinecolor="rgba(0, 0, 0, 0.2)",
+            showland=True,
+            landcolor = "rgba(218, 223, 233, 0.4)"
+
         )
         fig.update_layout(height=600, margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
@@ -150,7 +155,11 @@ def supply_world_map():
                     lon=[row['Longitude'], 4.8952],
                     lat=[row['Latitude'], 52.3676],
                     mode='lines',
-                    line=dict(width=3, color='rgba(255, 0, 110, 0.3)', dash='dashdot'),
+                    line=dict(
+                        width=2, 
+                        color='rgb(249, 190, 71, 0.5)', 
+                        dash='dashdot'
+                    ),
                     showlegend=False
                 )
             )
@@ -183,8 +192,9 @@ def supply_world_map():
                         marker=dict(
                             size=10,
                             color=supply_colors.get(row['Supply'], "grey"),
-                            opacity=0.7,
-                            symbol="circle"
+                            opacity=0.8,
+                            symbol="circle",
+                            line=dict(color='black', width=1)
                         ),
                         name=row['Supply']  # Use the supply instead of row['Name']
                     )
@@ -201,7 +211,8 @@ def supply_world_map():
                             size=10,
                             color=supply_colors.get(row['Supply'], "grey"),
                             opacity=0.7,
-                            symbol="circle"
+                            symbol="circle",
+                             line=dict(color='black', width=1)
                         ),
                         showlegend=False  # Do not add to legend
                     )

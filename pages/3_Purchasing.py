@@ -46,8 +46,13 @@ def supply_world_map():
         # Update geos and layout
         fig.update_geos(
             showcountries=True,
-            projection_type="natural earth",
-            # projection_type = "orthographic",
+            projection_type="equirectangular",
+            showcoastlines=True,
+            countrycolor="rgba(0, 0, 0, 0.2)", 
+            coastlinecolor="rgba(0, 0, 0, 0.2)",
+            showland=True,
+            landcolor = "rgba(218, 223, 233, 0.4)"
+
         )
         fig.update_layout(height=600, margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
@@ -87,7 +92,11 @@ def supply_world_map():
                     lon=[row['Longitude'], 4.8952],
                     lat=[row['Latitude'], 52.3676],
                     mode='lines',
-                    line=dict(width=2, color='rgba(255, 0, 110, 0.3)', dash='dashdot'),
+                    line=dict(
+                        width=2, 
+                        color='rgb(249, 190, 71, 0.5)', 
+                        dash='dashdot'
+                    ),
                     showlegend=False
                 )
             )
@@ -120,8 +129,9 @@ def supply_world_map():
                         marker=dict(
                             size=10,
                             color=supply_colors.get(row['Supply'], "grey"),
-                            opacity=0.7,
-                            symbol="circle"
+                            opacity=0.8,
+                            symbol="circle",
+                            line=dict(color='black', width=1)
                         ),
                         name=row['Supply']  # Use the supply instead of row['Name']
                     )
@@ -138,7 +148,8 @@ def supply_world_map():
                             size=10,
                             color=supply_colors.get(row['Supply'], "grey"),
                             opacity=0.7,
-                            symbol="circle"
+                            symbol="circle",
+                             line=dict(color='black', width=1)
                         ),
                         showlegend=False  # Do not add to legend
                     )
@@ -171,7 +182,14 @@ def supply_world_map():
     with tab4:
         display_world_map(round_3_data)
 
-supply_world_map()
+
+col1, col2 = st.columns(2, gap = "small")
+
+with col1:
+    supply_world_map()
+
+with col2:
+    st.subheader("Some other KPI's")
 
 # :::::: IMPORTANT KPI'S SECTION ::::::  
 def purchasing_tables():
