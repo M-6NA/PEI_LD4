@@ -143,7 +143,7 @@ def warehouse_info_section():
                     <div style="margin-top: 0;"><h2 style="margin-top: -15px; font-weight: bold; color: black;"></h2></div>
                 </div>
                 """,
-                unsafe_allow_html=True
+            unsafe_allow_html=True
         )
 
     def plot_stock_vs_demand_bars(round_val):

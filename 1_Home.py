@@ -91,7 +91,7 @@ def supply_world_map():
     st.subheader("Worldwide Suppliers")
 
     def display_world_map(data_df):
-                # Create a DataFrame
+        # Create a DataFrame
         map_df = pd.DataFrame(data_df)
  
         # Assigning colors to different supplies

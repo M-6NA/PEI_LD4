@@ -23,178 +23,379 @@ st.divider()
 # :::::::::::::::::::::::::::::::::: DATA PLOTS AND TABLES ::::::::::::::::::::::::::::::::::
 
 # :::::: WORLD MAP SECTION ::::::
-def supply_world_map():
 
-    st.subheader("Worldwide Suppliers")
+def display_world_map(data_df):
+    # Create a DataFrame
+    map_df = pd.DataFrame(data_df)
 
-    def display_world_map(data_df):
-        # Create a DataFrame
-        map_df = pd.DataFrame(data_df)
+    # Assigning colors to different supplies
+    supply_colors = {
+        "Pack": "#6a4c93",
+        "PET": "#1982c4",
+        "Orange": "#fb8500",
+        "Mango": "#8ac926",
+        "Vitamin C": "#ff595e"
+    }
 
-        # Assigning colors to different supplies
-        supply_colors = {
-            "Pack": "#6a4c93",
-            "PET": "#1982c4",
-            "Orange": "#fb8500",
-            "Mango": "#8ac926",
-            "Vitamin C": "#ff595e"
-        }
+    # Plotly figure setup
+    fig = go.Figure()
 
-        # Plotly figure setup
-        fig = go.Figure()
+    # Update geos and layout
+    fig.update_geos(
+        showcountries=True,
+        projection_type="equirectangular",
+        showcoastlines=True,
+        countrycolor="rgba(0, 0, 0, 0.2)", 
+        coastlinecolor="rgba(0, 0, 0, 0.2)",
+        showland=True,
+        landcolor = "rgba(218, 223, 233, 0.4)"
 
-        # Update geos and layout
-        fig.update_geos(
-            showcountries=True,
-            projection_type="equirectangular",
-            showcoastlines=True,
-            countrycolor="rgba(0, 0, 0, 0.2)", 
-            coastlinecolor="rgba(0, 0, 0, 0.2)",
-            showland=True,
-            landcolor = "rgba(218, 223, 233, 0.4)"
+    )
+    fig.update_layout(height=600, margin={"r": 0, "t": 0, "l": 0, "b": 210})
 
+    fig.update_layout(
+        legend=dict(
+            orientation='h',    # Horizontal orientation
+            yanchor='bottom',   # Anchor to bottom of the plot
+            y=1.05,             # Adjust this value to position the legend further down
+            xanchor='left',     # Anchor to right side
+            x=0                 # Anchor to right side of the plot
         )
-        fig.update_layout(height=600, margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    )
 
-        fig.update_layout(
-            legend=dict(
-                orientation='h',    # Horizontal orientation
-                yanchor='bottom',   # Anchor to bottom of the plot
-                y=1.05,             # Adjust this value to position the legend further down
-                xanchor='left',     # Anchor to right side
-                x=0                 # Anchor to right side of the plot
-            )
+    # Add a dot for the Netherlands
+    fig.add_trace(
+        go.Scattergeo(
+            lon=[4.8952],  # Longitude of the Netherlands
+            lat=[52.3676],  # Latitude of the Netherlands
+            text="Netherlands",
+            mode="markers",
+            marker=dict(
+                size=10,
+                color='blue',  # Color of the Netherlands dot
+                opacity=0.7,
+                symbol="circle"
+            ),
+            name="Netherlands"
         )
+    )
 
-        # Add a dot for the Netherlands
+    # Plot each product on the map and add arrows to the Netherlands
+    for index, row in map_df.iterrows():
+
+        # Add arrows from each location to the Netherlands
         fig.add_trace(
             go.Scattergeo(
-                lon=[4.8952],  # Longitude of the Netherlands
-                lat=[52.3676],  # Latitude of the Netherlands
-                text="Netherlands",
-                mode="markers",
-                marker=dict(
-                    size=10,
-                    color='blue',  # Color of the Netherlands dot
-                    opacity=0.7,
-                    symbol="circle"
+                lon=[row['Longitude'], 4.8952],
+                lat=[row['Latitude'], 52.3676],
+                mode='lines',
+                line=dict(
+                    width=2, 
+                    color='rgb(249, 190, 71, 0.5)', 
+                    dash='dashdot'
                 ),
-                name="Netherlands"
+                showlegend=False
             )
         )
 
-        # Plot each product on the map and add arrows to the Netherlands
-        for index, row in map_df.iterrows():
+        
+    added_supplies = {}
 
-            # Add arrows from each location to the Netherlands
+    for index, row in map_df.iterrows():
+        supply = row['Supply']
+        
+        # Check if the supply has already been added to the legend
+        if supply not in added_supplies:
+            added_supplies[supply] = True  # Mark the supply as added
+            
+            text_sup = f"Name: {row['Name']}<br>" \
+                        f"Supply: {row['Supply']}<br>" \
+                        f"Country: {row['Country']}<br>" \
+                        f"Qlty: {row['Qlty']} <br>"\
+                        f"Deliveries: {row['Deliveries']}<br>"\
+                        f"AVG order size: {row['AVG_order_size']}<br>"\
+                        f"TansP mode: {row['TransP_mode']}<br>"\
+                        f"Trade unit: {row['Trade_unit']}<br>"
+
             fig.add_trace(
                 go.Scattergeo(
-                    lon=[row['Longitude'], 4.8952],
-                    lat=[row['Latitude'], 52.3676],
-                    mode='lines',
-                    line=dict(
-                        width=2, 
-                        color='rgb(249, 190, 71, 0.5)', 
-                        dash='dashdot'
+                    lon=[row['Longitude']],
+                    lat=[row['Latitude']],
+                    text=text_sup,
+                    mode="markers",
+                    marker=dict(
+                        size=10,
+                        color=supply_colors.get(row['Supply'], "grey"),
+                        opacity=0.8,
+                        symbol="circle",
+                        line=dict(color='black', width=1)
                     ),
-                    showlegend=False
+                    name=row['Supply']  # Use the supply instead of row['Name']
+                )
+            )
+        else:
+            # Add a trace without adding to the legend for subsequent occurrences of the same supply
+            fig.add_trace(
+                go.Scattergeo(
+                    lon=[row['Longitude']],
+                    lat=[row['Latitude']],
+                    text=text_sup,
+                    mode="markers",
+                    marker=dict(
+                        size=10,
+                        color=supply_colors.get(row['Supply'], "grey"),
+                        opacity=0.7,
+                        symbol="circle",
+                            line=dict(color='black', width=1)
+                    ),
+                    showlegend=False  # Do not add to legend
                 )
             )
 
-            
-        added_supplies = {}
 
-        for index, row in map_df.iterrows():
-            supply = row['Supply']
-            
-            # Check if the supply has already been added to the legend
-            if supply not in added_supplies:
-                added_supplies[supply] = True  # Mark the supply as added
-                
-                text_sup = f"Name: {row['Name']}<br>" \
-                            f"Supply: {row['Supply']}<br>" \
-                            f"Country: {row['Country']}<br>" \
-                            f"Qlty: {row['Qlty']} <br>"\
-                            f"Deliveries: {row['Deliveries']}<br>"\
-                            f"AVG order size: {row['AVG_order_size']}<br>"\
-                            f"TansP mode: {row['TransP_mode']}<br>"\
-                            f"Trade unit: {row['Trade_unit']}<br>"
+    # Display the map
+    st.plotly_chart(fig, theme="streamlit", use_container_width=True)
 
-                fig.add_trace(
-                    go.Scattergeo(
-                        lon=[row['Longitude']],
-                        lat=[row['Latitude']],
-                        text=text_sup,
-                        mode="markers",
-                        marker=dict(
-                            size=10,
-                            color=supply_colors.get(row['Supply'], "grey"),
-                            opacity=0.8,
-                            symbol="circle",
-                            line=dict(color='black', width=1)
-                        ),
-                        name=row['Supply']  # Use the supply instead of row['Name']
-                    )
-                )
-            else:
-                # Add a trace without adding to the legend for subsequent occurrences of the same supply
-                fig.add_trace(
-                    go.Scattergeo(
-                        lon=[row['Longitude']],
-                        lat=[row['Latitude']],
-                        text=text_sup,
-                        mode="markers",
-                        marker=dict(
-                            size=10,
-                            color=supply_colors.get(row['Supply'], "grey"),
-                            opacity=0.7,
-                            symbol="circle",
-                             line=dict(color='black', width=1)
-                        ),
-                        showlegend=False  # Do not add to legend
-                    )
-                )
+def display_report(df):
+
+    css_styles = """
+            <style>
+                .column1 {
+                    background-color: rgb(244, 245, 247);
+                    text-align: left;
+                    border-radius: 10px;
+                    padding-left: 20px;
+                    margin-top: 40px;
+                    padding-bottom: 10px;
+                }
+
+                .column1 h4 {
+                    color: rgb(0, 0, 0, 1);
+                    padding-top: 10px;
+                }
+
+                table {
+                    width: 100%;
+                    border: none!important;
+                }
 
 
-        # Display the map
-        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+                th {
+                    text-align: center;
+                    font-size: 14px;
+                }
+
+                tr {
+                    height: 10px;
+                    font-size: 14px;
+                }
+
+                table, td, th{
+                    border: none!important;
+                }
+
+                td, th {
+                    border: none;
+                    padding-top: 1px!important;
+
+                }
+
+                p {
+                    margin: 0;
+                }
+
+                .right-align {
+                    text-align: right;
+                }
+
+                .left-align {
+                    text-align: left;
+                }
+
+                .center-align {
+                    text-align: center;
+                }
+
+                .bold {
+                    font-weight: bold;
+                }
+
+                .monospace {
+                    font-family: 'Consolas', monospace;
+                }
+
+            </style>
+        """
+
+    table_header = "<div class='column1'><div style='margin-bottom: -35px;'><h4 class='bold monospace'>Round supplier report</h4></div><br><div style='margin-bottom:-10px; margin-top: -4px; padding-right: 20px; padding-top: -5px;'><table cellspacing='0' cellpadding='0'><tr><th class='bold left-align'>Trade unit</th><th class='bold right-align'>Order size</th><th class='bold right-align'>Purchases</th><th class='bold right-align'>Purchase value</th><th class='bold right-align'>Transport costs</th></tr>"
     
-    added_sup_df = pd.read_excel('Data/Suppliers.xlsx')
+    color_mapping = {
+        'Pack1L': 'rgb(135, 110, 168)',
+        'PET': 'rgb(92, 154, 207)',
+        'Orange': 'rgb(245, 158, 52)',
+        'Mango': 'rgb(165, 213, 89)',
+        'Vitamin C': 'rgb(249, 121, 125)'
+    }
 
-    round_0_data = added_sup_df[added_sup_df['Round'] == 0]
-    round_1_data = added_sup_df[added_sup_df['Round'] == 1]
-    round_2_data = added_sup_df[added_sup_df['Round'] == 2]
-    round_3_data = added_sup_df[added_sup_df['Round'] == 3]
- 
+    table_rows = ""
+    current_trade_unit = None
+    for index, row in df.iterrows():
+        if row['Trade unit'] != current_trade_unit:
+            table_rows += f"<tr><th class='bold left-align'>{row['Trade unit']}</th></tr>"
+            item_info = df.loc[df['Trade unit'] == row['Trade unit'], ['Item', 'Order size', 'Purchases', 'Purchase value', 'Transport costs']]
+            for _, item_row in item_info.iterrows():
+                item_color = color_mapping.get(item_row['Item'], 'black')  # Default color if not found in the mapping
+                table_rows += f"<tr><td class='right-align monospace' style='font-weight: bold; color: {item_color};'>{item_row['Item']}</td><td class='right-align monospace'>{item_row['Order size']}</td><td class='right-align monospace'>{item_row['Purchases']}</td><td class='right-align monospace'>{item_row['Purchase value']}</td><td class='right-align monospace'>{item_row['Transport costs']}</td></tr>"
+            current_trade_unit = row['Trade unit']
+
+    table_footer = "</table></div></div>"
+
+    # Construct the complete HTML table
+    table_html = f"{css_styles}{table_header}{table_rows}{table_footer}"
+
+    # Display the HTML table in Streamlit using markdown
+    st.markdown(table_html, unsafe_allow_html=True)
+
+def display_quant_per_unit():
+        st.markdown(
+        f"""
+        <div class="column1" style="background-color: #f4f5f7; text-align: center; border-radius: 10px; padding-left: 10px; padding-top: 5px; margin-top: 10px;">
+            <p style="text-align: left; font-weight: bold; font-family: 'Consolas', monospace;">Quantities per Unit: </p>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;">
+                <div style="font-weight: normal; font-family: 'Consolas', monospace; font-size: 15px; text-align: left;">Content drum (liter): <span style="color: #5eb889;">250</span></div>
+                <div style="font-weight: normal; font-family: 'Consolas', monospace; font-size: 15px; text-align: left;">Content IBC (liter): <span style="color: #5eb889;">1,000</span></div>
+                <div style="font-weight: normal; font-family: 'Consolas', monospace; font-size: 14px; text-align: left;">Content tank truck (liter): <span style="color: #5eb889;">30,000</span></div>
+                <div style="font-weight: normal; font-family: 'Consolas', monospace; font-size: 15px; text-align: left;">Pallets per FTL: <span style="color: #5eb889;">30</span></div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+added_sup_df = pd.read_excel('Data/Suppliers.xlsx')
+
+round_0_data = added_sup_df[added_sup_df['Round'] == 0]
+round_1_data = added_sup_df[added_sup_df['Round'] == 1]
+round_2_data = added_sup_df[added_sup_df['Round'] == 2]
+round_3_data = added_sup_df[added_sup_df['Round'] == 3]
+
+
+st.subheader("Worldwide Suppliers")
+# Displaying the maps in tabs for each round
+tab1, tab2, tab3, tab4 = st.tabs(["Round 0", "Round 1", "Round 2", "Round 3"])
+
+with tab1:
+
+    col1, col2 = st.columns(2, gap = "small")
     
-    # Displaying the maps in tabs for each round
-    tab1, tab2, tab3, tab4 = st.tabs(["Round 0", "Round 1", "Round 2", "Round 3"])
-    
-    with tab1:
+    with col1:
         display_world_map(round_0_data)
 
-    with tab2:
+    with col2:
+
+        data_0 = {
+            'Trade unit': ['Drum', 'Pallet', 'Pallet', 'Tank', 'Tank'],
+            'Item': ['Vitamin C', 'Pack1L', 'PET', 'Orange', 'Mango'],
+            'Order size': ['2,659', '524,632', '490,166', '308,163', '30,000'],
+            'Purchases': [5.2, 10.6, 10.9, 4.3, 2.5],
+            'Purchase value': [ '€58,283' , '€149,106', '€291,665', '€682,471', '€86,240'],
+            'Transport costs': ['€5,460', '€10,381', '€132,654', '€63,870', '€4,398']
+        }
+
+        data_round_0 = pd.DataFrame(data_0)
+
+        display_report(data_round_0)
+
+        display_quant_per_unit()
+    
+
+with tab2:
+
+    col1, col2 = st.columns(2, gap = "small")
+    
+    with col1:
         display_world_map(round_1_data)
 
-    with tab3:
+    with col2:
+
+        data_1 = {
+            'Trade unit': ['Drum', 'Pallet', 'Pallet', 'Tank', 'Tank'],
+            'Item': ['Vitamin C', 'Pack1L', 'PET', 'Orange', 'Mango'],
+            'Order size': ['2,659', '524,632', '490,166', '308,163', '30,000'],
+            'Purchases': [5.2, 10.6, 10.9, 4.3, 2.5],
+            'Purchase value': [ '€58,283' , '€149,106', '€291,665', '€682,471', '€86,240'],
+            'Transport costs': ['€5,460', '€10,381', '€132,654', '€63,870', '€4,398']
+        }
+
+        data_round_1 = pd.DataFrame(data_1)
+
+        display_report(data_round_1)
+
+        display_quant_per_unit()
+
+
+with tab3:
+
+    col1, col2 = st.columns(2, gap = "small")
+    
+    with col1:
         display_world_map(round_2_data)
+    with col2:
 
-    with tab4:
+        data_2 = {
+            'Trade unit': ['Drum', 'Pallet', 'Pallet', 'Tank', 'Tank'],
+            'Item': ['Vitamin C', 'Pack1L', 'PET', 'Orange', 'Mango'],
+            'Order size': ['2,659', '524,632', '490,166', '308,163', '30,000'],
+            'Purchases': [5.2, 10.6, 10.9, 4.3, 2.5],
+            'Purchase value': [ '€58,283' , '€149,106', '€291,665', '€682,471', '€86,240'],
+            'Transport costs': ['€5,460', '€10,381', '€132,654', '€63,870', '€4,398']
+        }
+
+        data_round_2 = pd.DataFrame(data_2)
+
+        display_report(data_round_2)
+
+        display_quant_per_unit()
+
+
+with tab4:
+
+    col1, col2 = st.columns(2, gap = "small")
+    
+    with col1:
         display_world_map(round_3_data)
+    with col2:
+         
+        data_3 = {
+            'Trade unit': ['Drum', 'Pallet', 'Pallet', 'Tank', 'Tank'],
+            'Item': ['Vitamin C', 'Pack1L', 'PET', 'Orange', 'Mango'],
+            'Order size': ['2,659', '524,632', '490,166', '308,163', '30,000'],
+            'Purchases': [5.2, 10.6, 10.9, 4.3, 2.5],
+            'Purchase value': [ '€58,283' , '€149,106', '€291,665', '€682,471', '€86,240'],
+            'Transport costs': ['€5,460', '€10,381', '€132,654', '€63,870', '€4,398']
+        }
+
+        data_round_3 = pd.DataFrame(data_3)
+
+        display_report(data_round_3)
+
+        display_quant_per_unit()
 
 
-col1, col2 = st.columns(2, gap = "small")
 
-with col1:
-    supply_world_map()
 
-with col2:
-    st.subheader("Some other KPI's")
+
+
+
+
+
+
+
 
 # :::::: IMPORTANT KPI'S SECTION ::::::  
 def purchasing_tables():
     st.subheader("Important KPI's")
-
+    
 
 purchasing_tables()    
 
