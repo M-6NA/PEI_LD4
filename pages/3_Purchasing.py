@@ -294,12 +294,12 @@ with tab1:
     with col2:
 
         data_0 = {
-            'Trade unit': ['Drum', 'Pallet', 'Pallet', 'Tank', 'Tank'],
-            'Item': ['Vitamin C', 'Pack1L', 'PET', 'Orange', 'Mango'],
-            'Order size': ['2,659', '524,632', '490,166', '308,163', '30,000'],
-            'Purchases': [5.2, 10.6, 10.9, 4.3, 2.5],
-            'Purchase value': [ '€58,283' , '€149,106', '€291,665', '€682,471', '€86,240'],
-            'Transport costs': ['€5,460', '€10,381', '€132,654', '€63,870', '€4,398']
+            'Trade unit':       ['Drum',        'Pallet',       'Pallet',       'Tank',         'IBC'],
+            'Item':             ['Vitamin C',   'Pack1L',       'PET',          'Orange',       'Mango'],
+            'Order size':       ['2,775',       '1,173,483',    '1,068,679',    '288,000',      '14,893'],
+            'Purchases':        [5.3,            5.2,            5.3,            4.9,            5.2],
+            'Purchase value':   ['€50,446' ,    '€160,052',     '€308,801',     '€737,683',     '€87,285'],
+            'Transport costs':  ['€6,081',      '€8,797',       '€145,501',     '€69,102',      '€6,240']
         }
 
         data_round_0 = pd.DataFrame(data_0)
@@ -319,12 +319,12 @@ with tab2:
     with col2:
 
         data_1 = {
-            'Trade unit': ['Drum', 'Pallet', 'Pallet', 'Tank', 'Tank'],
-            'Item': ['Vitamin C', 'Pack1L', 'PET', 'Orange', 'Mango'],
-            'Order size': ['2,659', '524,632', '490,166', '308,163', '30,000'],
-            'Purchases': [5.2, 10.6, 10.9, 4.3, 2.5],
-            'Purchase value': [ '€58,283' , '€149,106', '€291,665', '€682,471', '€86,240'],
-            'Transport costs': ['€5,460', '€10,381', '€132,654', '€63,870', '€4,398']
+            'Trade unit':       ['Drum',        'Pallet',       'Pallet',       'Tank',         'IBC'],
+            'Item':             ['Vitamin C',   'Pack1L',       'PET',          'Orange',       'Mango'],
+            'Order size':       ['2,317',       '819,917',      '722,260',      '201,410',      '11,830'],
+            'Purchases':        [6.1,            7.0,            7.3,            6.6,            6.3],
+            'Purchase value':   ['€60,391' ,    '€151,176',     '€290,067',     '€689,303',     '€85,615'],
+            'Transport costs':  ['€6,039',      '€8,683',       '€137,240',     '€64,966',      '€6,358']
         }
 
         data_round_1 = pd.DataFrame(data_1)
@@ -343,12 +343,12 @@ with tab3:
     with col2:
 
         data_2 = {
-            'Trade unit': ['Drum', 'Pallet', 'Pallet', 'Tank', 'Tank'],
-            'Item': ['Vitamin C', 'Pack1L', 'PET', 'Orange', 'Mango'],
-            'Order size': ['2,659', '524,632', '490,166', '308,163', '30,000'],
-            'Purchases': [5.2, 10.6, 10.9, 4.3, 2.5],
-            'Purchase value': [ '€58,283' , '€149,106', '€291,665', '€682,471', '€86,240'],
-            'Transport costs': ['€5,460', '€10,381', '€132,654', '€63,870', '€4,398']
+            'Trade unit':       ['Drum',        'Pallet',       'Pallet',       'Tank',         'Tank'],
+            'Item':             ['Vitamin C',   'Pack1L',       'PET',          'Orange',       'Mango'],
+            'Order size':       ['4,353',       '307,616',      '281,497',      '861,053',      '62,400'],
+            'Purchases':        [3.8,            19.4,           20.3,            1.7,            1.5],
+            'Purchase value':   ['€69,893' ,    '€160,776',     '€316,088',     '€738,763',     '€105,395'],
+            'Transport costs':  ['€6,128',      '€12,944',      '€145,172',     '€68,544',      '€5,012']
         }
 
         data_round_2 = pd.DataFrame(data_2)
@@ -367,12 +367,12 @@ with tab4:
     with col2:
          
         data_3 = {
-            'Trade unit': ['Drum', 'Pallet', 'Pallet', 'Tank', 'Tank'],
-            'Item': ['Vitamin C', 'Pack1L', 'PET', 'Orange', 'Mango'],
-            'Order size': ['2,659', '524,632', '490,166', '308,163', '30,000'],
-            'Purchases': [5.2, 10.6, 10.9, 4.3, 2.5],
-            'Purchase value': [ '€58,283' , '€149,106', '€291,665', '€682,471', '€86,240'],
-            'Transport costs': ['€5,460', '€10,381', '€132,654', '€63,870', '€4,398']
+            'Trade unit':       ['Drum',        'Pallet',       'Pallet',       'Tank',     'Tank'],
+            'Item':             ['Vitamin C',   'Pack1L',       'PET',          'Orange',   'Mango'],
+            'Order size':       ['2,659',       '524,632',      '490,166',      '308,163',  '30,000'],
+            'Purchases':        [5.2,           10.6,           10.9,           4.3,         2.5],
+            'Purchase value':   ['€58,283',     '€149,106',     '€291,665',     '€682,471', '€86,240'],
+            'Transport costs':  ['€5,460',      '€10,381',      '€132,654',     '€63,870',  '€4,398']
         }
 
         data_round_3 = pd.DataFrame(data_3)
