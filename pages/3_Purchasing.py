@@ -57,7 +57,7 @@ def display_world_map(data_df):
         legend=dict(
             orientation='h',    # Horizontal orientation
             yanchor='bottom',   # Anchor to bottom of the plot
-            y=1.05,             # Adjust this value to position the legend further down
+            y=0,             # Adjust this value to position the legend further down
             xanchor='left',     # Anchor to right side
             x=0                 # Anchor to right side of the plot
         )
@@ -104,19 +104,19 @@ def display_world_map(data_df):
     for index, row in map_df.iterrows():
         supply = row['Supply']
         
+        text_sup = f"Name: {row['Name']}<br>" \
+            f"Supply: {row['Supply']}<br>" \
+            f"Country: {row['Country']}<br>" \
+            f"Qlty: {row['Qlty']} <br>"\
+            f"Deliveries: {row['Deliveries']}<br>"\
+            f"AVG order size: {row['AVG_order_size']}<br>"\
+            f"TansP mode: {row['TransP_mode']}<br>"\
+            f"Trade unit: {row['Trade_unit']}<br>"
+
         # Check if the supply has already been added to the legend
         if supply not in added_supplies:
             added_supplies[supply] = True  # Mark the supply as added
             
-            text_sup = f"Name: {row['Name']}<br>" \
-                        f"Supply: {row['Supply']}<br>" \
-                        f"Country: {row['Country']}<br>" \
-                        f"Qlty: {row['Qlty']} <br>"\
-                        f"Deliveries: {row['Deliveries']}<br>"\
-                        f"AVG order size: {row['AVG_order_size']}<br>"\
-                        f"TansP mode: {row['TransP_mode']}<br>"\
-                        f"Trade unit: {row['Trade_unit']}<br>"
-
             fig.add_trace(
                 go.Scattergeo(
                     lon=[row['Longitude']],
@@ -308,7 +308,6 @@ with tab1:
 
         display_quant_per_unit()
     
-
 with tab2:
 
     col1, col2 = st.columns(2, gap = "small")
@@ -333,7 +332,6 @@ with tab2:
 
         display_quant_per_unit()
 
-
 with tab3:
 
     col1, col2 = st.columns(2, gap = "small")
@@ -356,7 +354,6 @@ with tab3:
         display_report(data_round_2)
 
         display_quant_per_unit()
-
 
 with tab4:
 
@@ -383,23 +380,328 @@ with tab4:
 
 
 
+# :::::::::::::::::::::::::::::::::: IMPORTANT KPI'S SECTION ::::::::::::::::::::::::::::::::::  
+  
+# :::::::::::::::::::::::::::::::::: HELPER FUNCTIONS ::::::::::::::::::::::::::::::::::
+
+# Defining the excel MAIN_DATA_FILE directory constant
+MAIN_DATA_DIR = 'Data/MAIN_DATA_FILE.xlsx'
+
+# Function for opening specific tabs from the main excel file
+def read_table_tabs(tab_name):
+    tab_df = pd.read_excel(MAIN_DATA_DIR, sheet_name = tab_name)
+
+    with st.expander(f"{tab_name} Table"):
+        st.write(tab_df)
+
+    return tab_df 
+
+def plot_bar_charts_group(data, col_name, plot_name, mode):
+    df = data.copy()
+
+    # Define color mapping
+    component_colors = {
+        "Pack 1L": "#6a4c93",
+        "PET": "#1982c4",
+        "Orange": "#fb8500",
+        "Mango": "#8ac926",
+        "Vitamin C": "#ff595e"
+    }
+
+    df_agg = df.groupby(['Component', 'Round'], as_index = False)[col_name].sum()
+
+    if col_name == 'Rejection  (%)':
+        df_agg['Rejection  (%)'] = df_agg['Rejection  (%)'] * 100
+        # st.write(df_agg)
+    else:
+        pass
+
+    df_agg['Color'] = df_agg['Component'].map(lambda x: component_colors.get(x))
 
 
+    # Grouped bar plot
+    fig = go.Figure()
+    for component, data in df_agg.groupby('Component'):
+        fig.add_trace(go.Bar(
+                x=data['Round'],
+                y=data[col_name],
+                name=component,
+                marker=dict(color=component_colors[component])
+            )
+        )
+
+    fig.update_layout(
+            title=plot_name,
+            xaxis_title='Round',
+            yaxis_title= col_name,
+            legend_title='Component',
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=1.02,
+                xanchor='right',
+                x=1
+            ),
+            showlegend=True,
+            barmode='stack'
+    )
+
+    if mode == 'stacked':
+        fig.update_layout(
+            barmode = 'stack'
+        )
+    elif mode == 'grouped': 
+        fig.update_layout(
+            barmode = 'group'
+        )
+
+    if col_name == 'Order lines previous round':
+        fig.update_traces(
+            texttemplate='<b>%{y:.1f}</b>',
+            textposition='outside',
+            marker=dict(
+                line=dict(
+                    width=1, color='DarkSlateGray'
+                    )
+                )
+        )
+    
+    elif col_name == 'Rejection  (%)':
+        fig.update_traces(
+            texttemplate='<b>%{y:.2f}%</b>',
+            textposition='inside',
+            textfont=dict(size=13),
+            marker=dict(
+                line=dict(
+                    width=1, color='DarkSlateGray'
+                    )
+                )
+        )
+
+    elif col_name == 'Stock (pieces or liters)':
+        top_line = df_agg.groupby('Round')['Stock (pieces or liters)'].sum()
+
+        fig.update_traces(
+            texttemplate='<b>%{y:.3s}</b>',
+            textposition='inside',
+            textfont=dict(size=13),
+            marker=dict(
+                line=dict(
+                    width=1, color='DarkSlateGray'
+                    )
+                )
+        )
+
+        fig.add_trace(go.Scatter(
+            x=top_line.index,
+            y=top_line.values,
+            mode='lines',
+            name='Top Line',
+                line=dict(
+                    color='red',
+                    width=3,
+                    dash = 'dashdot',
+                ),
+            hoverinfo='none'
+        ))
+
+    elif col_name == 'Stock (weeks)':
+        fig.update_traces(
+            texttemplate='<b>%{y:.1f}</b>',
+            textposition='inside',
+            textfont=dict(size=13),
+            marker=dict(
+                line=dict(
+                    width=1, color='DarkSlateGray'
+                    )
+                )
+        )
 
 
-
-
-
-
-
-# :::::: IMPORTANT KPI'S SECTION ::::::  
-def purchasing_tables():
-    st.subheader("Important KPI's")
+    elif col_name == 'Purchase  value previous round' or 'Transport costs by Rounds':
+        fig.update_traces(
+            texttemplate='<b>%{y:.3s}</b>',
+            textposition='outside',
+            marker=dict(
+                line=dict(
+                    width=1, color='DarkSlateGray'
+                    )
+                )
+        )
     
 
-purchasing_tables()    
+    
+
+    st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+def plot_bar_charts_group2(data, col_name, plot_name, mode):
+    df = data.copy()
+
+    # Define color mapping
+    component_colors = { 
+        "Pack 1L": "#6a4c93",
+        "PET": "#1982c4",
+        "Orange": "#fb8500",
+        "Mango": "#8ac926",
+        "Vitamin C": "#ff595e"
+    }
+
+    df_agg = df.groupby(['Component', 'Round']).agg({col_name: 'mean'}).reset_index()
+    df_agg[col_name] *= 100
+
+
+    # Grouped bar plot
+    fig = go.Figure()
+    for component, data in df_agg.groupby('Component'):
+        fig.add_trace(go.Bar(
+                x=data['Round'],
+                y=data[col_name],
+                name=component,
+                marker=dict(color=component_colors[component])
+            )
+        )
+
+    if col_name == 'Delivery reliability (%)': 
+        fig.add_shape(
+            type="line",
+            x0=df_agg['Round'].min()-0.5,
+            y0=95,
+            x1=df_agg['Round'].max()+0.5,
+            y1=95,
+            line=dict(
+                color="rgba(0,0,0,0.5)", 
+                width=2, 
+                dash="dashdot"
+            ),
+        )
+    elif col_name == 'Rejection  (%)':
+         fig.add_shape(
+            type="line",
+            x0=df_agg['Round'].min()-0.5,
+            y0=2,
+            x1=df_agg['Round'].max()+0.5,
+            y1=2,
+            line=dict(
+                color="rgba(0,0,0,0.5)", 
+                width=2, 
+                dash="dashdot"
+            ),
+        )
+
+
+    fig.update_layout(
+            title=plot_name,
+            xaxis_title='Round',
+            yaxis_title= col_name,
+            legend_title='Component',
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=1.02,
+                xanchor='right',
+                x=1
+            ),
+            showlegend=True,
+    )
+
+    if mode == 'stacked':
+        fig.update_layout(
+            barmode = 'stack'
+        )
+    elif mode == 'grouped': 
+        fig.update_layout(
+            barmode = 'group'
+        )
+
+
+    fig.update_traces(
+        texttemplate='<b>%{y:.0f}%</b>',
+        textposition='outside',
+        marker=dict(
+            line=dict(
+                width=1, color='DarkSlateGray'
+                )
+            )
+    )
+
+
+    st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+# :::::: ORDER LINES BY ROUNDS SECTION ::::::
+st.divider()
+st.subheader("Important KPI's")
+
+SUPPLIER_DF = read_table_tabs('Supplier')
+COMPONENT_DF = read_table_tabs('Component')
+
+def order_lines_by_rounds_section():
+    plot_bar_charts_group(SUPPLIER_DF, 'Order lines previous round', 'Order lines by Rounds', 'grouped')
+
+order_lines_by_rounds_section()
+
+
+# :::::: PURCHASE VALUE BY ROUNDS SECTION ::::::
+st.divider()
+
+def purchase_value_by_rounds_section():
+
+    plot_bar_charts_group(SUPPLIER_DF, 'Purchase  value previous round', 'Purchase value by Rounds', 'grouped')
+
+purchase_value_by_rounds_section()
+
+# :::::: TRANSPORT COSTS BY ROUNDS SECTION ::::::
+st.divider()
+
+def transport_costs_by_rounds_section():
+      plot_bar_charts_group(SUPPLIER_DF, 'Transport costs previous round', 'Transport costs by Rounds', 'grouped')
+
+transport_costs_by_rounds_section()
+
+
+# :::::: SUM OF REJECTION(%) BY ROUND AND COMPONENT SECTION ::::::
+st.divider()
+
+def sum_rejection_section():
+   plot_bar_charts_group(SUPPLIER_DF, 'Rejection  (%)', 'Sum of Rejection(%) by Round and Component', 'stacked')
+
+
+sum_rejection_section()
+
+
+# :::::: SUM OF STOCK (PIECES OR LITERS) ... SECTION ::::::
+st.divider()
+
+def sum_of_stock_section():
+
+   plot_bar_charts_group(COMPONENT_DF, 'Stock (pieces or liters)', 'Sum of Stock (pieces or liters) by Round and Component', 'stacked')
+
+sum_of_stock_section()
+
+
+# :::::: SUM OF STOCK (WEEKS) BY ROUND AND COMPONENT SECTION ::::::
+st.divider()
+
+def sum_of_stock_weeks_section():
+    plot_bar_charts_group(COMPONENT_DF, 'Stock (weeks)', 'Sum of Stock (weeks) by Round and Component', 'stacked')
+
+sum_of_stock_weeks_section()
+
+# :::::: RAW MATERIAL COSTS% SECTION ::::::
+st.divider()
+st.subheader('Raw Material costs%? Where? In the finances table?')
+
+# :::::: DELIVERY RELIABILITY% SECTION ::::::
+st.divider()
+
+plot_bar_charts_group2(SUPPLIER_DF, "Delivery reliability (%)", "Delivery Reliability (%) by Round and Component (\u2191)", 'grouped')
+
+
+# :::::: REJECTION COMPONENTS% SECTION ::::::
+st.divider()
+plot_bar_charts_group2(SUPPLIER_DF, 'Rejection  (%)', 'Rejection (%) by Round and Component (\u2193)', 'grouped')
 
 
 
-st.subheader("Graphs of important KPI's")
+
+
 

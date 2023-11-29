@@ -84,6 +84,97 @@ def generic_section():
 
 generic_section()
 
+# ::::::::::::::::: PRODUCTS SECTION :::::::::::::::::  
+def products_section():
+
+    # DATA OVERVIEW SECTION 
+    st.divider()
+    st.subheader("Products")
+    products_df = pd.read_csv('Data/Products_(1).csv', delimiter = ';')
+    products_df = products_df[:-3]      # Droping the last 3 rows (Outliers)
+    products_df['AmountWater'] = products_df['AmountWater'].str.replace(',', '.')   # Changing the , to . for numbers
+    products_df['AmountWater'] = products_df['AmountWater'].astype(float)
+
+    with st.expander("Products data preview"):
+        st.write(products_df)
+        
+    # INFORMATION ABOUT THE PRODUCT
+    def product_info(function_df, product, img):
+        
+        filtered_product = function_df[function_df['ProductName'] == product]
+        
+        if not filtered_product.empty:
+            product_id = filtered_product['ProductID'].values[0]
+            product_name = filtered_product['ProductName'].values[0]
+
+            shelf_life = filtered_product['ShelfLifeInWeeks'].values[0]
+            pallet_layer = filtered_product['NumberPerPalletLayer'].values[0]
+            pallet_count = filtered_product['NumberPerPallet'].values[0]
+            liters_per_pack = filtered_product['LitersPerPack'].values[0]
+            
+            orange_amount = round(filtered_product['AmountOrange'].values[0] * 100, 2)
+            mango_amount = round(filtered_product['AmountMango'].values[0] * 100, 2)
+            vitamin_c_amount = round(filtered_product['AmountVitaminC'].values[0] * 100, 2)
+            water_amount = round(filtered_product['AmountWater'].values[0]* 100,2)
+        
+            sales_price_retail = round(filtered_product['SalesPriceRetail'].values[0]* 10, 2)
+
+        col1, col2, col3, col4 = st.columns([0.05, 0.45, 0.45, 0.05], gap = "small")
+
+        with col1:
+            pass
+        with col2:
+            # st.header(f"{product_name}")
+            st.code(f"{product_name}| ID: {product_id}")
+            image = Image.open(f'images/{img}')
+            st.image(image)
+        with col3:
+            st.code("Product Information:")
+            col_31, col_32 = st.columns([0.5, 0.5], gap = "small")
+
+            with col_31:
+                st.code(f"Shelf Life: {shelf_life} weeks")
+                st.code(f"Nr. Per Pallet Layer: {pallet_layer}")
+                st.code(f"Nr. Per Pallet: {pallet_count}")
+                st.code(f"Liters Per Pack: {liters_per_pack}")
+
+            with col_32:
+                st.code(f"Amount of Orange: {orange_amount} ml")
+                st.code(f"Amount of Mango: {mango_amount} ml")
+                st.code(f"Amount of Vitamin C: {vitamin_c_amount} ml")
+                st.code(f"Amount of Water: {water_amount} ml")
+
+            st.code(f"Sales Price: ${sales_price_retail}")
+
+
+        with col4:
+            pass
+
+        
+        
+
+    tab1, tab2, tab3, tab4, tab5, tab6  = st.tabs(["Fressie Orange 1 liter", 
+                                                    "Fressie Orange/Mango 1 liter", 
+                                                    "Fressie Orange/Mango+C 1L", 
+                                                    "Fressie Orange PET", 
+                                                    "Fressie Orange/C-power PET", 
+                                                    "Fressie Orange/Mango PET"])
+
+    with tab1:
+        product_info(products_df, 'Fressie Orange 1 liter', 'Fressie_Orange_1_liter_AI_removebg.png')
+    with tab2:
+        product_info(products_df, 'Fressie Orange/Mango 1 liter', 'Fressie_Orange_Mango_1_liter_AI-removebg.png')
+    with tab3:
+        product_info(products_df, 'Fressie Orange/Mango+C 1L', 'Fressie_Orange_Mango_C_1L_AI-removebg.png')
+    with tab4:
+        product_info(products_df, 'Fressie Orange PET', 'Fressie_Orange_1_liter_PET_AI-removebg.png')
+    with tab5:
+        product_info(products_df, 'Fressie Orange/C-power PET', 'Fressie_Orange_Cpower_AI-removebg.png')
+    with tab6:
+        product_info(products_df, 'Fressie Orange/Mango PET', 'Fressie_Orange_Mango_PET_AI-removebg.png')
+
+products_section()
+
 # # ::::::::::::::::: PLOTLY WORLD MAP ::::::::::::::::: 
 
 def supply_world_map():
@@ -500,97 +591,6 @@ def production_section():
         production_info(production_df, 'Fressie Orange/Mango PET')
 
 production_section()
-
-# ::::::::::::::::: PRODUCTS SECTION :::::::::::::::::  
-def products_section():
-
-    # DATA OVERVIEW SECTION 
-    st.divider()
-    st.subheader("Products")
-    products_df = pd.read_csv('Data/Products_(1).csv', delimiter = ';')
-    products_df = products_df[:-3]      # Droping the last 3 rows (Outliers)
-    products_df['AmountWater'] = products_df['AmountWater'].str.replace(',', '.')   # Changing the , to . for numbers
-    products_df['AmountWater'] = products_df['AmountWater'].astype(float)
-
-    with st.expander("Products data preview"):
-        st.write(products_df)
-        
-    # INFORMATION ABOUT THE PRODUCT
-    def product_info(function_df, product, img):
-        
-        filtered_product = function_df[function_df['ProductName'] == product]
-        
-        if not filtered_product.empty:
-            product_id = filtered_product['ProductID'].values[0]
-            product_name = filtered_product['ProductName'].values[0]
-
-            shelf_life = filtered_product['ShelfLifeInWeeks'].values[0]
-            pallet_layer = filtered_product['NumberPerPalletLayer'].values[0]
-            pallet_count = filtered_product['NumberPerPallet'].values[0]
-            liters_per_pack = filtered_product['LitersPerPack'].values[0]
-            
-            orange_amount = round(filtered_product['AmountOrange'].values[0] * 100, 2)
-            mango_amount = round(filtered_product['AmountMango'].values[0] * 100, 2)
-            vitamin_c_amount = round(filtered_product['AmountVitaminC'].values[0] * 100, 2)
-            water_amount = round(filtered_product['AmountWater'].values[0]* 100,2)
-        
-            sales_price_retail = round(filtered_product['SalesPriceRetail'].values[0]* 10, 2)
-
-        col1, col2, col3, col4 = st.columns([0.05, 0.45, 0.45, 0.05], gap = "small")
-
-        with col1:
-            pass
-        with col2:
-            # st.header(f"{product_name}")
-            st.code(f"{product_name}| ID: {product_id}")
-            image = Image.open(f'images/{img}')
-            st.image(image)
-        with col3:
-            st.code("Product Information:")
-            col_31, col_32 = st.columns([0.5, 0.5], gap = "small")
-
-            with col_31:
-                st.code(f"Shelf Life: {shelf_life} weeks")
-                st.code(f"Nr. Per Pallet Layer: {pallet_layer}")
-                st.code(f"Nr. Per Pallet: {pallet_count}")
-                st.code(f"Liters Per Pack: {liters_per_pack}")
-
-            with col_32:
-                st.code(f"Amount of Orange: {orange_amount} ml")
-                st.code(f"Amount of Mango: {mango_amount} ml")
-                st.code(f"Amount of Vitamin C: {vitamin_c_amount} ml")
-                st.code(f"Amount of Water: {water_amount} ml")
-
-            st.code(f"Sales Price: ${sales_price_retail}")
-
-
-        with col4:
-            pass
-
-        
-        
-
-    tab1, tab2, tab3, tab4, tab5, tab6  = st.tabs(["Fressie Orange 1 liter", 
-                                                    "Fressie Orange/Mango 1 liter", 
-                                                    "Fressie Orange/Mango+C 1L", 
-                                                    "Fressie Orange PET", 
-                                                    "Fressie Orange/C-power PET", 
-                                                    "Fressie Orange/Mango PET"])
-
-    with tab1:
-        product_info(products_df, 'Fressie Orange 1 liter', 'Fressie_Orange_1_liter_AI_removebg.png')
-    with tab2:
-        product_info(products_df, 'Fressie Orange/Mango 1 liter', 'Fressie_Orange_Mango_1_liter_AI-removebg.png')
-    with tab3:
-        product_info(products_df, 'Fressie Orange/Mango+C 1L', 'Fressie_Orange_Mango_C_1L_AI-removebg.png')
-    with tab4:
-        product_info(products_df, 'Fressie Orange PET', 'Fressie_Orange_1_liter_PET_AI-removebg.png')
-    with tab5:
-        product_info(products_df, 'Fressie Orange/C-power PET', 'Fressie_Orange_Cpower_AI-removebg.png')
-    with tab6:
-        product_info(products_df, 'Fressie Orange/Mango PET', 'Fressie_Orange_Mango_PET_AI-removebg.png')
-
-products_section()
 
 # ::::::::::::::::: PENALTIES PER CUSTOMER SECTION :::::::::::::::::  
 def penalties_section():

@@ -30,8 +30,8 @@ st.markdown(
     - ##### ~~`Warehouse salesarea table`~~ #####
         - ##### `Ratio between capacity and cube utilization` #####
         - ##### `Cost per free space` ##### 
-    - ##### `Bottling line table` ##### 
-    - ##### `Mixers table` ##### 
+    - ##### ~~`Bottling line table`~~ ##### 
+    - ##### ~~`Mixers table`~~ ##### 
     - ##### `Product table` ##### 
 
     
@@ -154,11 +154,15 @@ def warehouse_info_section():
         filtered_df = main_df[main_df['Round'] == round_val]
 
         # Create a grouped bar chart using Plotly Express
-        fig = px.bar(filtered_df, x='Product', y=['Demand per week (value)', 'Stock value'],
-                    color_discrete_sequence=px.colors.qualitative.Pastel,
-                    barmode='group',
-                    labels={'Product': 'Product', 'value': 'Value', 'variable': 'Metric'},
-                    title=f'Demand vs Stock Value | Round: {round_val}')
+        fig = px.bar(
+            filtered_df, 
+            x='Product', 
+            y=['Demand per week (value)', 'Stock value'],
+            color_discrete_sequence=px.colors.qualitative.Pastel,
+            barmode='group',
+            labels={'Product': 'Product', 'value': 'Value', 'variable': 'Metric'},
+            title=f'Demand vs Stock Value | Round: {round_val}'
+        )
 
         # Update the layout to place the legend inside the plot
         fig.update_layout(
@@ -384,48 +388,105 @@ def warehouse_info_section():
 
         plot_stock_vs_demand_bars(3)
 
-
 def mixers_fillers_section():
     st.divider()
-    st.subheader("Mixing and bottling")
+    st.subheader("Bottling and mixing")
 
     def overview_pie_plot():
         pass
 
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-            "Overview",
-            "Round -2",
-            "Round -1",
-            "Round 0",
-            "Round 1",
-            "Round 2",
-            "Round 3"
+    def plot_bottling_line_usage(round_number, bottling_line):
+        
+        main_df = BOTTLING_LINE_DF.copy()
+        filtered_data = main_df[(main_df['Bottling line'] == bottling_line) & (main_df['Round'] == round_number)]
 
-    ])
+        
+        if filtered_data.empty:
+            st.write(f"No data found for Round{round_number}")
+            return
+        
+        usage_columns = ['Run time (%)', 'Changeover time (%)', 'Breakdown time (%)', 'Unused capacity (%)']
+        usage_data = filtered_data.iloc[0][usage_columns]
+        overtime_value = round(filtered_data.iloc[0]['Overtime (%)'],2)
 
-    with tab1:
-        pass
-    
-    with tab2:
-        pass
+        fig = px.pie(
+            values=usage_data.values,
+            names=usage_data.index,
+            title=f'{bottling_line} Usage for Round {round_number}',
+            labels={'names': 'Usage Type'}
+        )
 
-    with tab3:
-        pass
+        fig.update_layout(
+            title_font=dict(size=20), 
+            font=dict(size=17)
+        )
 
-    with tab4:
-        pass
+        # Add overtime value to the legend
+        fig.add_annotation(
+            text=f'- Overtime: {overtime_value}%',
+            x=1.25,
+            y=0.6,
+            showarrow=False,
+            font=dict(size=17, color='black')
+        )
 
-    with tab5:
-        pass
+        st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
 
-    with tab6:
-        pass
+    def plot_avg_lot_size_per_round():
+        
+        main_df = MIXERS_DF.copy()
+        avg_lot_size_per_round = main_df.groupby('Round')['Average lot size'].mean().reset_index()
 
-    with tab7:
-        pass
+        fig = px.bar(
+            avg_lot_size_per_round,
+            x='Round',
+            y='Average lot size',
+            title='Mixer Average Lot Size per Round',
+            labels={'Round': 'Round', 'Average lot size': 'Average Lot Size'},
+            color_continuous_scale=px.colors.qualitative.Pastel, 
+        )
+ 
+
+        st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+
+    col1, col2 = st.columns(2, gap = "small")
+
+    with col1:
+        
+        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+                "Round -2",
+                "Round -1",
+                "Round 0",
+                "Round 1",
+                "Round 2",
+                "Round 3"
+
+        ])
+        
+
+        with tab1:
+            plot_bottling_line_usage(-2, 'AllFill 1')
+        
+        with tab2:
+            plot_bottling_line_usage(-1, 'AllFill 1')
+           
+        with tab3:
+            plot_bottling_line_usage(0, 'AllFill 1')
+
+        with tab4:
+            plot_bottling_line_usage(1, 'AllFill 1')
+
+        with tab5:
+            plot_bottling_line_usage(2, 'AllFill 1')
+            plot_bottling_line_usage(2, 'Double Dutch 1')
+
+        with tab6:
+            plot_bottling_line_usage(3, 'AllFill 1')
+
+    with col2:
+        plot_avg_lot_size_per_round()
 
 warehouse_info_section()
-
 mixers_fillers_section()
 
 
