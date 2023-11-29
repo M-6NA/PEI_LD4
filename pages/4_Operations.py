@@ -42,7 +42,7 @@ st.markdown(
 # :::::::::::::::::::::::::::::::::: HELPER FUNCTIONS ::::::::::::::::::::::::::::::::::
 
 # Defining the excel MAIN_DATA_FILE directory constant
-MAIN_DATA_DIR = 'Data/MAIN_DATA_FILE.xlsx'
+MAIN_DATA_DIR = 'Data/MAIN_DATA_FILE.xlsx' 
 
 # Function for opening specific tabs from the main excel file
 def read_table_tabs(tab_name):
