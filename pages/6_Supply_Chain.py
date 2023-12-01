@@ -666,7 +666,7 @@ def component_overview_section():
     )
     with tab1:
 
-        component_info_table('Orange')
+        component_info_table('Orange') 
 
     with tab2:
 
