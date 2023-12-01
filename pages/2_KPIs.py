@@ -85,7 +85,11 @@ def generic_section():
         fig.update_layout(height=300)
         fig.update_xaxes(tickvals=sorted(main_df['Round']))
 
-        fig.update_traces(line=dict(width=4, color = 'orange'), mode='lines+markers', marker=dict(size=8, color = 'grey'))
+        fig.update_traces(
+            line=dict(width=4, color = 'orange'), 
+            mode='lines+markers', 
+            marker=dict(size=8, color = 'grey')
+        )
 
         st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
 
@@ -202,3 +206,47 @@ read_table_tabs('Distributor')
 
 st.divider()
 
+def test_section():
+    import pandas as pd
+    import numpy as np
+
+    # Sample DataFrame
+    data = {
+        'Round': ['Order lines previous round'],
+        '-2': [15563],
+        '-1': [2278890],
+        '0': [12344],
+        '1': [12345],
+        '2': [45423],
+        '3': [67546]
+    }
+
+    df = pd.DataFrame(data)
+
+    # Transpose the DataFrame
+    # df = df.set_index('Round').T
+
+    def highlight_specific_value(val):
+        color = 'transparent'
+        if not pd.isnull(val) and not pd.isnull(prev_val):
+            change_percentage = (val - prev_val) / prev_val
+            if change_percentage >= 0.15:
+                color = 'rgba(0, 128, 0, 0.4)'  # Green
+            elif change_percentage <= -0.15:
+                color = 'rgba(255, 77, 109, 0.4)'  # Red
+        return f'background-color: {color}'
+
+    # Apply style to the DataFrame
+    for col in df.columns:
+        prev_val = None
+        for idx in df.index:
+            val = df.loc[idx, col]
+            df.loc[idx, col] = val
+            df.style.applymap(highlight_specific_value, subset=pd.IndexSlice[idx, col])
+
+    # Display the styled DataFrame
+    styled_df = df.style.applymap(highlight_specific_value)
+    st.write(styled_df)
+
+
+test_section()

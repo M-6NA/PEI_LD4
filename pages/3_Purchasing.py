@@ -664,7 +664,6 @@ st.divider()
 def sum_rejection_section():
    plot_bar_charts_group(SUPPLIER_DF, 'Rejection  (%)', 'Sum of Rejection(%) by Round and Component', 'stacked')
 
-
 sum_rejection_section()
 
 
