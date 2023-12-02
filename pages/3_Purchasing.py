@@ -379,7 +379,6 @@ with tab4:
         display_quant_per_unit()
 
 
-
 # :::::::::::::::::::::::::::::::::: IMPORTANT KPI'S SECTION ::::::::::::::::::::::::::::::::::  
   
 # :::::::::::::::::::::::::::::::::: HELPER FUNCTIONS ::::::::::::::::::::::::::::::::::
@@ -440,7 +439,8 @@ def plot_bar_charts_group(data, col_name, plot_name, mode):
                 yanchor='bottom',
                 y=1.02,
                 xanchor='right',
-                x=1
+                x=1,
+                title = '',
             ),
             showlegend=True,
             barmode='stack'
@@ -599,7 +599,8 @@ def plot_bar_charts_group2(data, col_name, plot_name, mode):
                 yanchor='bottom',
                 y=1.02,
                 xanchor='right',
-                x=1
+                x=1,
+                title = ''
             ),
             showlegend=True,
     )
@@ -629,7 +630,7 @@ def plot_bar_charts_group2(data, col_name, plot_name, mode):
 
 # :::::: ORDER LINES BY ROUNDS SECTION ::::::
 st.divider()
-st.subheader("Important KPI's")
+st.subheader("KPI's per round")
 
 SUPPLIER_DF = read_table_tabs('Supplier')
 COMPONENT_DF = read_table_tabs('Component')
