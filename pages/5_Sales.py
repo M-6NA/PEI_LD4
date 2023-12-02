@@ -233,7 +233,7 @@ def production_section():
         fig = go.Figure()
         for round, data in df_agg.groupby('Round'):
             fig.add_trace(
-                go.Bar(
+                go.Bar( 
                     x = data['Product'],
                     y = data[col_name],
                     name = round,
