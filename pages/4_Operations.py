@@ -562,7 +562,7 @@ def mixers_fillers_section():
  
 
     #     st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
-
+    # Tessssttstst
     def plot_avg_lot_size_per_round():
         main_df = MIXERS_DF.copy()
         avg_lot_size_per_round = main_df.groupby('Round')['Average lot size'].mean().reset_index()
