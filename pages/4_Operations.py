@@ -19,26 +19,6 @@ st.set_page_config(
 # Title for the page
 st.title("Operations")
 
-# ::::::::::::::::: THINGS TO DO :::::::::::::::::
-st.divider()
-st.subheader("Things to do:")
-
-st.markdown(
-    """
-    - ##### ~~`Cube utilization raw materials warehouse`~~ #####
-    - ##### ~~`Cube utilization finished goods warehouse`~~ #####
-    - ##### ~~`Warehouse salesarea table`~~ #####
-        - ##### `Ratio between capacity and cube utilization` #####
-        - ##### `Cost per free space` ##### 
-    - ##### ~~`Bottling line table`~~ ##### 
-    - ##### ~~`Mixers table`~~ ##### 
-    - ##### `Product table` ##### 
-
-    
-    """
-    
-)
-
 # :::::::::::::::::::::::::::::::::: HELPER FUNCTIONS ::::::::::::::::::::::::::::::::::
 
 # Defining the excel MAIN_DATA_FILE directory constant
@@ -70,22 +50,196 @@ def warehouse_info_section():
     st.divider()
     st.subheader("Warehousing")
 
-    # Function for the OVERVIEW TAB
+    # # Function for the OVERVIEW TAB
+    # def cube_util_plot():
+    #     main_df = WAREH_SALES_AREA_DF.copy()
+    #     main_df['Cube utilization (%)'] = main_df['Cube utilization (%)'] * 100
+
+    #     fig = px.line(
+    #         main_df, 
+    #         x='Round', 
+    #         y='Cube utilization (%)', 
+    #         color='Warehouse',
+    #         title='Cube Utilization per Round for Each Warehouse',
+    #         mode='lines+markers',
+    #         line = dict(width = 4),
+    #         marker = dict(size = 8),
+    #     )
+        
+    #     fig.update_layout(
+    #         xaxis_title='Round', 
+    #         yaxis_title='Cube Utilization (%)',
+    #     )
+
+    #     # Show the plot
+    #     st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+
     def cube_util_plot():
         main_df = WAREH_SALES_AREA_DF.copy()
         main_df['Cube utilization (%)'] = main_df['Cube utilization (%)'] * 100
 
-        fig = px.line(
-            main_df, 
-            x='Round', 
-            y='Cube utilization (%)', 
-            color='Warehouse',
-            title='Cube Utilization per Round for Each Warehouse')
-        
-        fig.update_layout(xaxis_title='Round', yaxis_title='Cube Utilization (%)')
+        fig = go.Figure()
+
+        for warehouse, data in main_df.groupby('Warehouse'):
+            fig.add_trace(
+                go.Scatter(
+                    x=data['Round'],
+                    y=data['Cube utilization (%)'],
+                    mode='lines+markers',
+                    name=warehouse,
+                    line=dict(width=4),
+                    marker=dict(size=8)
+                )
+            )
+
+        fig.update_layout(
+            xaxis_title='Round',
+            yaxis_title='Cube Utilization (%)',
+            title='Cube Utilization per Round for Each Warehouse',
+            showlegend=True,
+            barmode = 'group',
+            legend=dict(
+                orientation='h',
+                yanchor='top',
+                y=1.15,
+                xanchor='left',
+                x=0,
+            )
+        )
 
         # Show the plot
-        st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+    # def plot_stock_vs_demand_bars():
+        # main_df = PRODUCT_WAREH_DF.copy()
+
+        # # Filter main_df by the selected round value
+        # filtered_df = main_df[main_df['Round'] == round_val]
+
+        # # Create a grouped bar chart using Plotly Express
+        # fig = go.Figure()
+
+        # for metric in ['Demand per week (value)', 'Stock value']:
+        #     fig.add_trace(
+        #         go.Bar(
+        #             x=filtered_df['Product'],
+        #             y=filtered_df[metric],
+        #             name=metric
+        #         )
+        #     )
+
+        # fig.update_layout(
+        #     barmode='group',
+        #     xaxis_title='Product',
+        #     yaxis_title='Value',
+        #     title=f'Demand vs Stock Value by Round',
+        #     legend=dict(
+        #         orientation="h",  # Set the orientation to horizontal
+        #         yanchor="bottom",
+        #         y=1.02,
+        #         xanchor="right",
+        #         x=0.6
+        #     ),
+        # )
+
+        # st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+    def plot_stock_vs_demand_bars():
+
+        # main_df = PRODUCT_WAREH_DF.copy()
+
+        # # Grouping by 'Round' and summing the values
+        # grouped_df = main_df.groupby('Round').agg({'Demand per week (value)': 'sum', 'Stock value': 'sum'}).reset_index()
+
+        # custom_palette = ['#ef233c', '#8d99ae', '#2ca02c', '#d62728']
+
+        # fig = go.Figure()
+
+        # fig.add_trace(
+        #     go.Bar(
+        #         x=grouped_df['Round'],
+        #         y=grouped_df['Demand per week (value)'],
+        #         name='Demand per week (value)',
+        #         color_discrete_sequence=custom_palette[0],
+        #     )
+        # )
+
+        # fig.add_trace(
+        #     go.Bar(
+        #         x=grouped_df['Round'],
+        #         y=grouped_df['Stock value'],
+        #         name='Stock value'
+        #     )
+        # )
+
+        # fig.update_layout(
+        #     barmode='group',
+        #     xaxis_title='Round',
+        #     yaxis_title='Value',
+        #     title='Total Demand vs Stock Value by Round',
+        #     legend=dict(
+        #         orientation="h",  # Set the orientation to horizontal
+        #         yanchor="bottom",
+        #         y=1.02,
+        #         xanchor="right",
+        #         x=0.6
+        #     ),
+        # )
+
+        # st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+        main_df = PRODUCT_WAREH_DF.copy()
+
+        # Grouping by 'Round' and summing the values
+        grouped_df = main_df.groupby('Round').agg({'Demand per week (value)': 'sum', 'Stock value': 'sum'}).reset_index()
+
+        custom_palette = ['#ef233c', '#8d99ae', '#2ca02c', '#d62728']
+
+        fig = go.Figure()
+
+        fig.add_trace(
+            go.Bar(
+                x=grouped_df['Round'],
+                y=grouped_df['Demand per week (value)'],
+                name='Demand per week (value)',
+                marker_color=custom_palette[0],  # Setting color for the first bar
+            )
+        )
+
+        fig.add_trace(
+            go.Bar(
+                x=grouped_df['Round'],
+                y=grouped_df['Stock value'],
+                name='Stock value',
+                marker_color=custom_palette[1],  # Setting color for the second bar
+            )
+        )
+
+        fig.update_traces(
+            texttemplate='<b>%{y:.0s}</b>',
+            textposition='outside',
+            marker=dict(
+                line=dict(
+                    width=1, color='DarkSlateGray'
+                    )
+                )
+        )
+
+        fig.update_layout(
+            barmode='group',
+            xaxis_title='Round',
+            yaxis_title='Value',
+            title='Total Demand vs Stock Value by Round',
+            legend=dict(
+                orientation="h",  # Set the orientation to horizontal
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=0.6
+            ),
+        )
+
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
 
     # Function for plotting the gauge plot for warehouses
     def plot_cube_util_gauge(round_val, wh_name):
@@ -146,36 +300,6 @@ def warehouse_info_section():
             unsafe_allow_html=True
         )
 
-    def plot_stock_vs_demand_bars(round_val):
-
-        main_df = PRODUCT_WAREH_DF.copy()
-
-        # Filter main_df by the selected round value
-        filtered_df = main_df[main_df['Round'] == round_val]
-
-        # Create a grouped bar chart using Plotly Express
-        fig = px.bar(
-            filtered_df, 
-            x='Product', 
-            y=['Demand per week (value)', 'Stock value'],
-            color_discrete_sequence=px.colors.qualitative.Pastel,
-            barmode='group',
-            labels={'Product': 'Product', 'value': 'Value', 'variable': 'Metric'},
-            title=f'Demand vs Stock Value | Round: {round_val}'
-        )
-
-        # Update the layout to place the legend inside the plot
-        fig.update_layout(
-            legend=dict(
-                orientation="h",  # Set the orientation to horizontal
-                yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=0.6
-            )
-        )
-
-        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
 
     tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
             "Overview",
@@ -189,7 +313,14 @@ def warehouse_info_section():
 
  
     with tab1:
-        cube_util_plot()
+
+        col1, col2 = st.columns(2, gap = "small")
+
+        with col1:
+            cube_util_plot()
+
+        with col2:
+            plot_stock_vs_demand_bars()
 
     with tab2:
         
@@ -213,21 +344,14 @@ def warehouse_info_section():
             plot_cube_util_gauge(-2,'Finished goods warehouse')
 
         # Products text
-        st.markdown(
-            f"""
-            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: -2</h4></div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        col1, col2 = st.columns(2, gap = "small")
-
-        with col1:
-            plot_stock_vs_demand_bars(-2)
-        with col2:
-            st.header("Column 2")
+        # st.markdown(
+        #     f"""
+        #     <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+        #         <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: -2</h4></div>
+        #     </div>
+        #     """,
+        #     unsafe_allow_html=True
+        # )
 
     with tab3:
         # Cube utilization text
@@ -250,16 +374,14 @@ def warehouse_info_section():
             plot_cube_util_gauge(-1,'Finished goods warehouse')
         
         # Products text
-        st.markdown(
-            f"""
-            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: -1</h4></div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        plot_stock_vs_demand_bars(-1)
+        # st.markdown(
+        #     f"""
+        #     <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+        #         <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: -1</h4></div>
+        #     </div>
+        #     """,
+        #     unsafe_allow_html=True
+        # )
 
     with tab4:
         # Cube utilization text
@@ -283,16 +405,14 @@ def warehouse_info_section():
 
         
         # Products text
-        st.markdown(
-            f"""
-            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 0</h4></div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        plot_stock_vs_demand_bars(0)
+        # st.markdown(
+        #     f"""
+        #     <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+        #         <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 0</h4></div>
+        #     </div>
+        #     """,
+        #     unsafe_allow_html=True
+        # )
 
     with tab5:
         # Cube utilization text
@@ -315,16 +435,15 @@ def warehouse_info_section():
             plot_cube_util_gauge(1,'Finished goods warehouse')
 
         # Products text
-        st.markdown(
-            f"""
-            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 1</h4></div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        # st.markdown(
+        #     f"""
+        #     <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+        #         <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 1</h4></div>
+        #     </div>
+        #     """,
+        #     unsafe_allow_html=True
+        # )
 
-        plot_stock_vs_demand_bars(1)
 
     with tab6:
         # Cube utilization text
@@ -346,16 +465,15 @@ def warehouse_info_section():
             plot_cube_util_gauge(2,'Finished goods warehouse')
 
         # Products text
-        st.markdown(
-            f"""
-            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 2</h4></div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        # st.markdown(
+        #     f"""
+        #     <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+        #         <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 2</h4></div>
+        #     </div>
+        #     """,
+        #     unsafe_allow_html=True
+        # )
 
-        plot_stock_vs_demand_bars(2)
     
     with tab7:
         # Cube utilization text
@@ -377,23 +495,19 @@ def warehouse_info_section():
             plot_cube_util_gauge(3,'Finished goods warehouse')
 
         # Products text
-        st.markdown(
-            f"""
-            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
-                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 3</h4></div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        # st.markdown(
+        #     f"""
+        #     <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0; margin-top: 10px;">
+        #         <div style="margin-bottom: -15px;"><h4 style = "color: black;">Products in finished goods warehouse | Round: 3</h4></div>
+        #     </div>
+        #     """,
+        #     unsafe_allow_html=True
+        # )
 
-        plot_stock_vs_demand_bars(3)
 
 def mixers_fillers_section():
     st.divider()
     st.subheader("Bottling and mixing")
-
-    def overview_pie_plot():
-        pass
 
     def plot_bottling_line_usage(round_number, bottling_line):
         
@@ -432,20 +546,54 @@ def mixers_fillers_section():
 
         st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
 
-    def plot_avg_lot_size_per_round():
+    # def plot_avg_lot_size_per_round():
         
+    #     main_df = MIXERS_DF.copy()
+    #     avg_lot_size_per_round = main_df.groupby('Round')['Average lot size'].mean().reset_index()
+
+    #     fig = px.bar(
+    #         avg_lot_size_per_round,
+    #         x='Round',
+    #         y='Average lot size',
+    #         title='Mixer Average Lot Size per Round',
+    #         labels={'Round': 'Round', 'Average lot size': 'Average Lot Size'},
+    #         color_continuous_scale=px.colors.qualitative.Pastel, 
+    #     )
+ 
+
+    #     st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+
+    def plot_avg_lot_size_per_round():
         main_df = MIXERS_DF.copy()
         avg_lot_size_per_round = main_df.groupby('Round')['Average lot size'].mean().reset_index()
 
-        fig = px.bar(
-            avg_lot_size_per_round,
-            x='Round',
-            y='Average lot size',
-            title='Mixer Average Lot Size per Round',
-            labels={'Round': 'Round', 'Average lot size': 'Average Lot Size'},
-            color_continuous_scale=px.colors.qualitative.Pastel, 
+        fig = go.Figure(
+            data=[
+                go.Bar(
+                    x=avg_lot_size_per_round['Round'],
+                    y=avg_lot_size_per_round['Average lot size'],
+                    marker=dict(color='#ff4d6d'),
+                )
+            ],
+            layout=go.Layout(
+                title='Mixer Average Lot Size per Round',
+                xaxis=dict(title='Round'),
+                yaxis=dict(title='Average Lot Size'),
+            )
+            
         )
- 
+
+        fig.update_traces(
+            texttemplate='<b>%{y:.3s}</b>',
+            textposition='outside',
+            marker=dict(
+                line=dict(
+                    width=1, color='DarkSlateGray'
+                    )
+                )
+        )
+
+        fig.update_layout(barmode='group')
 
         st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
 
