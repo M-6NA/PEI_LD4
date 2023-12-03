@@ -17,7 +17,7 @@ st.set_page_config(
 
 
 # Title for the page
-st.title("Purchasing")
+st.title("💶 Purchasing")
 st.divider()
 
 # :::::::::::::::::::::::::::::::::: DATA PLOTS AND TABLES ::::::::::::::::::::::::::::::::::
@@ -51,7 +51,7 @@ def display_world_map(data_df):
         landcolor = "rgba(218, 223, 233, 0.4)"
 
     )
-    fig.update_layout(height=600, margin={"r": 0, "t": 0, "l": 0, "b": 210})
+    fig.update_layout(height=500, margin={"r": 0, "t": 0, "l": 0, "b": 10})
 
     fig.update_layout(
         legend=dict(

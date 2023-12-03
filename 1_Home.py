@@ -19,7 +19,7 @@ st.set_page_config(
 
 
 # Title for the page
-st.title("The Fresh Connection Dashboard ")
+st.title(":tangerine: The Fresh Connection Dashboard")
 st.divider()
 
 # :::::::::::::::::::::::::::::::::: DATA PLOTS AND TABLES :::::::::::::::::::::::::::::::::: 

@@ -17,7 +17,7 @@ st.set_page_config(
 # st.sidebar.image('images/orange_icon_2.png', use_column_width=True)
 
 # Title for the page
-st.title("Finances")
+st.title("📈 Finances")
 st.divider()
 
 # ::::::::::::::::: DATA PLOTS AND TABLES ::::::::::::::::: 
@@ -111,7 +111,9 @@ def plot_data_2(val):
     fig.update_layout(height=300)
     fig.update_xaxes(tickvals=sorted(main_df['Round']))
 
-    fig.update_traces(line=dict(width=4, color = 'orange'), mode='lines+markers', marker=dict(size=8, color = 'grey'))
+    fig.update_traces(
+        line=dict(width=4, color = 'orange'), 
+        mode='lines+markers', marker=dict(size=8, color = 'grey'))
 
     st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
 

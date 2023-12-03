@@ -18,7 +18,7 @@ st.set_page_config(
 # st.sidebar.image('images/orange_icon_2.png', use_column_width=True)
 
 # Title for the page
-st.title("Supply Chain")
+st.title("🔗 Supply Chain")
 
 # :::::::::::::::::::::::::::::::::: DATA PLOTS AND TABLES ::::::::::::::::::::::::::::::::::
 
@@ -579,7 +579,6 @@ avg_cost_of_delivery_section()
 
 def component_overview_section():
         
-    
     def component_info_table(component):
         
         SELECTED_THRESHOLD = slider_threshold

@@ -17,7 +17,7 @@ st.set_page_config(
 # st.sidebar.image('images/orange_icon_2.png', use_column_width=True)
 
 # Title for the page
-st.title("Sales")
+st.title("🧾 Sales")
 
 # :::::::::::::::::::::::::::::::::: DATA PLOTS AND TABLES ::::::::::::::::::::::::::::::::::
 
