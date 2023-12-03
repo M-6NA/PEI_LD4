@@ -567,7 +567,7 @@ def mixers_fillers_section():
         main_df = MIXERS_DF.copy()
         avg_lot_size_per_round = main_df.groupby('Round')['Average lot size'].mean().reset_index()
 
-        fig = go.Figure(
+        fig = go.Figure( 
             data=[
                 go.Bar(
                     x=avg_lot_size_per_round['Round'],
