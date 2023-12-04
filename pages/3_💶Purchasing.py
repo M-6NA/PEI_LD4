@@ -15,7 +15,6 @@ st.set_page_config(
 
 # st.sidebar.image('images/orange_icon_2.png', use_column_width=True)
 
-
 # Title for the page
 st.title("💶 Purchasing")
 st.divider()
@@ -390,8 +389,8 @@ MAIN_DATA_DIR = 'Data/MAIN_DATA_FILE.xlsx'
 def read_table_tabs(tab_name):
     tab_df = pd.read_excel(MAIN_DATA_DIR, sheet_name = tab_name)
 
-    with st.expander(f"{tab_name} Table"):
-        st.write(tab_df)
+    # with st.expander(f"{tab_name} Table"):
+    #     st.write(tab_df)
 
     return tab_df 
 
@@ -628,9 +627,287 @@ def plot_bar_charts_group2(data, col_name, plot_name, mode):
 
     st.plotly_chart(fig, theme="streamlit", use_container_width=True)
 
+
+# :::::: LINE PLOT SECTION ::::::
+st.divider()
+st.subheader("Important KPI's")
+
+FINANCE_DF = pd.read_excel('Data/FinanceReport.xlsx')
+SUPPLIER_COMPONENT_DF = read_table_tabs('Supplier - Component')
+COMPONENT_DF = read_table_tabs('Component')
+
+def important_kpi_section():
+    
+    def raw_material_costs_plot():
+        main_df = FINANCE_DF.copy().T.reset_index()
+        main_df.columns = main_df.iloc[0]
+        main_df = main_df.drop(main_df.index[0])
+
+        # Filter duplicate columns based on the first occurrence
+        main_df = main_df.loc[:, ~main_df.columns.duplicated()]
+
+        filt_df = main_df[['Round', 'Gross margin - Cost of goods sold - Purchase value', 'Realized revenue']]
+        
+        filt_df['Raw_mat_costs'] = (filt_df['Gross margin - Cost of goods sold - Purchase value'] / filt_df['Realized revenue']) * 100
+
+        # st.write(filt_df)
+
+        fig = go.Figure()
+
+        # Add a scatter plot with Round on the x-axis and Raw_mat_costs on the y-axis
+        fig.add_trace(go.Scatter(
+            x=filt_df['Round'],
+            y=filt_df['Raw_mat_costs'],
+            mode='lines+markers',  # You can use 'lines+markers' if you want lines connecting the markers
+            line = dict(
+                width = 4,
+                color = 'orange',
+            ),
+            marker=dict(
+                color='grey',
+                size = 8,
+            ),  
+            name='Raw Material Costs'
+        ))
+
+        # Add horizontal line at y=32
+        fig.add_shape(type="line",
+                    x0=min(filt_df['Round'] - 0.5),
+                    y0=32,
+                    x1=max(filt_df['Round'] + 0.5),
+                    y1=32,
+                    line=dict(color="rgba(255,0,0,0.5)", width=2, dash="dashdot"),  # Modify color and style as needed
+                    )
+
+        # Update layout options (optional)
+        fig.update_layout(
+            title='Raw Material Costs (%) by Round (\u2193)',
+            xaxis=dict(title='Round'),
+            yaxis=dict(title='Raw Material Costs %'),
+            height = 400
+        )
+
+        annotations = []
+        for i, row in filt_df.iterrows():
+            raw_mat_costs_rounded = round(row['Raw_mat_costs'], 1)
+            annotations.append(
+                dict(
+                    x=row['Round'],
+                    y=row['Raw_mat_costs'],
+                    xref='x',
+                    yref='y',
+                    text=f'<b>{str(raw_mat_costs_rounded)}%</b>',
+                    showarrow=False,
+                    font=dict(
+                        size=12,
+                    ),  
+                    xanchor='center',  # Center text horizontally on marker
+                    yanchor='bottom',  # Position text above the marker
+                    yshift=10  # Adjust vertical position
+                )
+            )
+
+        # Add annotations to the plot
+        for annotation in annotations:
+            fig.add_annotation(annotation)
+
+        st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+        
+    def line_plot(col_name, plot_name):
+        main_df = COMPONENT_DF.copy()
+
+        df_agg = main_df.groupby(['Component','Round'], as_index = False)[col_name].sum()
+        
+        # Calculate the average delivery reliability per round
+        avg_per_round = df_agg.groupby('Round')[col_name].mean().reset_index()
+        avg_per_round.columns = ['Round', 'AVG']
+        avg_per_round['AVG'] *= 100
+
+        # st.write(avg_per_round)
+
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatter(
+            x = avg_per_round['Round'],
+            y = avg_per_round['AVG'],
+            mode='lines+markers',  # You can use 'lines+markers' if you want lines connecting the markers
+            line = dict(
+                width = 4,
+                color = 'orange',
+            ),
+            marker=dict(
+                color='grey',
+                size = 8,
+            ),  
+        ))
+
+        
+        if col_name == 'Delivery reliability (%)':
+            fig.update_layout(
+                title=f"{plot_name}",
+                xaxis=dict(title='Round'),
+                yaxis=dict(title='AVG Delivery reliability %'),
+                height = 400
+            )
+
+            # Add horizontal line at y=12
+            fig.add_shape(type="line",
+                        x0=min(avg_per_round['Round'] - 0.5),
+                        y0=95,
+                        x1=max(avg_per_round['Round'] + 0.5),
+                        y1=95,
+                        line=dict(
+                            color="rgba(255,0,0,0.5)", 
+                            width=2, 
+                            dash="dashdot"
+                            ),  # Modify color and style as needed
+            )
+
+        elif col_name == "Rejection (%)":
+            fig.update_layout(
+                title=f"{plot_name}",
+                xaxis=dict(title='Round'),
+                yaxis=dict(title='AVG Rejection %'),
+                height = 400
+            )
+
+            # Add horizontal line at y=12
+            fig.add_shape(type="line",
+                        x0=min(avg_per_round['Round'] - 0.5),
+                        y0=2.1,
+                        x1=max(avg_per_round['Round'] + 0.5),
+                        y1=2.1,
+                        line=dict(
+                            color="rgba(255,0,0,0.5)", 
+                            width=2, 
+                            dash="dashdot"
+                            ),  # Modify color and style as needed
+            )
+        
+        annotations = []
+        for i, row in avg_per_round.iterrows():
+            avg_rounded = round(row['AVG'], 2)
+            annotations.append(
+                dict(
+                    x=row['Round'],
+                    y=row['AVG'],
+                    xref='x',
+                    yref='y',
+                    text=f'<b>{str(avg_rounded)}%</b>',
+                    showarrow=False,
+                    font=dict(
+                        size=12,
+                    ),  
+                    xanchor='center',  # Center text horizontally on marker
+                    yanchor='bottom',  # Position text above the marker
+                    yshift=10  # Adjust vertical position
+                )
+            )
+
+        # Add annotations to the plot
+        for annotation in annotations:
+            fig.add_annotation(annotation)
+
+        st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+
+    def avg_transport_costs():
+        main_df = SUPPLIER_COMPONENT_DF.copy()
+        
+        def calculate_transport_percentage(row):
+            if row['Purchase value previous round'] == 0:
+                return 0
+            else:
+                return row['Transport costs previous round'] / row['Purchase value previous round']
+
+        
+        # Apply the function row-wise to create a new column 'Transport%'
+        main_df['Transport%'] = main_df.apply(calculate_transport_percentage, axis=1)
+
+        # Group by 'Round' and calculate the average 'Transport%' per round
+        avg_transport_per_round = main_df.groupby('Round')['Transport%'].mean().reset_index()
+        avg_transport_per_round.columns = ['Round', 'Transport%']
+        avg_transport_per_round['Transport%'] *= 100
+
+        # st.write(avg_transport_per_round)
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatter(
+            x = avg_transport_per_round['Round'],
+            y = avg_transport_per_round['Transport%'],
+            mode='lines+markers',  # You can use 'lines+markers' if you want lines connecting the markers
+            line = dict(
+                width = 4,
+                color = 'orange',
+            ),
+            marker=dict(
+                color='grey',
+                size = 8,
+            ),  
+        ))
+
+        fig.update_layout(
+                title="AVG Transport costs per order (%) by Round (\u2193)",
+                xaxis=dict(title='Round'),
+                yaxis=dict(title='AVG of transport %'),
+                height = 400
+        )
+
+        fig.add_shape(type="line",
+                        x0=min(avg_transport_per_round['Round'] - 0.5),
+                        y0=12,
+                        x1=max(avg_transport_per_round['Round'] + 0.5),
+                        y1=12,
+                        line=dict(
+                            color="rgba(255,0,0,0.5)", 
+                            width=2, 
+                            dash="dashdot"
+                            ),  # Modify color and style as needed
+        )
+
+        annotations = []
+        for i, row in avg_transport_per_round.iterrows():
+            avg_rounded = round(row['Transport%'], 2)
+            annotations.append(
+                dict(
+                    x=row['Round'],
+                    y=row['Transport%'],
+                    xref='x',
+                    yref='y',
+                    text=f'<b>{str(avg_rounded)}%</b>',
+                    showarrow=False,
+                    font=dict(
+                        size=12,
+                    ),  
+                    xanchor='center',  # Center text horizontally on marker
+                    yanchor='bottom',  # Position text above the marker
+                    yshift=10  # Adjust vertical position
+                )
+            )
+
+        # Add annotations to the plot
+        for annotation in annotations:
+            fig.add_annotation(annotation)
+
+        st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+
+
+    col1, col2 = st.columns(2, gap = "small")
+
+    with col1:
+        raw_material_costs_plot()
+        avg_transport_costs()
+
+    with col2:
+        line_plot('Delivery reliability (%)', 'AVG Delivery reliability (%) by Round (\u2191)')
+        line_plot('Rejection (%)', 'AVG Rejection (%) by Round (\u2193)')
+
+important_kpi_section()
+
+
+
 # :::::: ORDER LINES BY ROUNDS SECTION ::::::
 st.divider()
-st.subheader("KPI's per round")
+st.subheader("Component KPI's per round")
 
 SUPPLIER_DF = read_table_tabs('Supplier')
 COMPONENT_DF = read_table_tabs('Component')
@@ -686,19 +963,37 @@ def sum_of_stock_weeks_section():
 
 sum_of_stock_weeks_section()
 
-# :::::: RAW MATERIAL COSTS% SECTION ::::::
+# # :::::: RAW MATERIAL COSTS% SECTION ::::::
+# st.divider()
+# st.subheader('Raw Material costs%? Where? In the finances table?')
+
+# # :::::: DELIVERY RELIABILITY% SECTION ::::::
+# st.divider()
+
+# plot_bar_charts_group2(SUPPLIER_DF, "Delivery reliability (%)", "Delivery Reliability (%) by Round and Component (\u2191)", 'grouped')
+
+
+# # :::::: REJECTION COMPONENTS% SECTION ::::::
+# st.divider()
+# plot_bar_charts_group2(SUPPLIER_DF, 'Rejection  (%)', 'Rejection (%) by Round and Component (\u2193)', 'grouped')
+
+
+# :::::: TABLES SECTION ::::::
 st.divider()
-st.subheader('Raw Material costs%? Where? In the finances table?')
+st.subheader("Tables utilized")
 
-# :::::: DELIVERY RELIABILITY% SECTION ::::::
-st.divider()
+def show_table(df, name):
+    with st.expander(f"{name} Table"):
+        st.write(df)
 
-plot_bar_charts_group2(SUPPLIER_DF, "Delivery reliability (%)", "Delivery Reliability (%) by Round and Component (\u2191)", 'grouped')
+
+show_table(FINANCE_DF, 'Finance')
+show_table(SUPPLIER_DF, 'Supplier')
+show_table(COMPONENT_DF, 'Component')
+show_table(SUPPLIER_COMPONENT_DF, 'Supplier - Component')
 
 
-# :::::: REJECTION COMPONENTS% SECTION ::::::
-st.divider()
-plot_bar_charts_group2(SUPPLIER_DF, 'Rejection  (%)', 'Rejection (%) by Round and Component (\u2193)', 'grouped')
+
 
 
 

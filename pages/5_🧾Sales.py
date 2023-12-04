@@ -30,8 +30,8 @@ MAIN_DATA_DIR = 'Data/MAIN_DATA_FILE.xlsx'
 def read_table_tabs(tab_name):
     tab_df = pd.read_excel(MAIN_DATA_DIR, sheet_name = tab_name)
 
-    with st.expander(f"{tab_name} Table"):
-        st.write(tab_df)
+    # with st.expander(f"{tab_name} Table"):
+    #     st.write(tab_df)
 
     return tab_df 
 
@@ -45,11 +45,6 @@ CUSTOMER_PRODUCT_DF = read_table_tabs('Customer - Product')
 # :::::::::::::::::::::::::::::::::: SERVICE LEVEL SECTION ::::::::::::::::::::::::::::::::::
 st.divider() 
 st.subheader('Service Level')
-st.markdown("""
-    - ~~`Service level (order lines)`~~
-    - ~~`Service level (pieces)`~~
-    - ~~`Attained contract index`~~
-""")
 
 def service_level_section():
     
@@ -108,10 +103,6 @@ service_level_section()
 # :::::::::::::::::::::::::::::::::: COMPONENTS SECTION :::::::::::::::::::::::::::::::::: 
 st.divider()
 st.subheader('Components')
-st.markdown("""
-    - ~~`Delivery reliability (%)`~~
-    - ~~`Rejection(%)`~~
-""")
 
 def components_section():
     
@@ -195,10 +186,6 @@ components_section()
 # :::::::::::::::::::::::::::::::::: PRODUCTIONS SECTION ::::::::::::::::::::::::::::::::::
 st.divider()
 st.subheader('Products')
-st.markdown("""
-    - ~~`Service level`~~
-    - ~~`Obsoletes (%)`~~
-""")
 
 def production_section():
     
@@ -288,11 +275,6 @@ production_section()
 # ::::::::::::::::::::::::::::::::::CUSTOMERS SECTION ::::::::::::::::::::::::::::::::::
 st.divider()
 st.subheader('Customers')
-st.markdown("""
-    - ~~`Additional sales as a result of promotions (Always Best)`~~
-    - ~~`Additional sales as a result of promotions Top`~~
-    - ~~`Additional sales as a result of promotions Colmart`~~
-""")
 
 def customers_section():
 
@@ -379,3 +361,15 @@ def customers_section():
 
 
 customers_section()
+
+st.divider()
+st.subheader("Tables utilized")
+
+def show_table(df, name):
+    with st.expander(f"{name} Table"):
+        st.write(df)
+
+show_table(CUSTOMERS_DF, 'Customers')
+show_table(SUPPLIERS_DF, 'Supplier')
+show_table(PRODUCT_DF, 'Product')
+show_table(CUSTOMER_PRODUCT_DF, 'Customer - Product')

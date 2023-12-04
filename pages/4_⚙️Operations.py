@@ -28,8 +28,8 @@ MAIN_DATA_DIR = 'Data/MAIN_DATA_FILE.xlsx'
 def read_table_tabs(tab_name):
     tab_df = pd.read_excel(MAIN_DATA_DIR, sheet_name = tab_name)
 
-    with st.expander(f"{tab_name} Table"):
-        st.write(tab_df)
+    # with st.expander(f"{tab_name} Table"):
+    #     st.write(tab_df)
 
     return tab_df 
 
@@ -562,7 +562,7 @@ def mixers_fillers_section():
  
 
     #     st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
-    # Tessssttstst
+    
     def plot_avg_lot_size_per_round():
         main_df = MIXERS_DF.copy()
         avg_lot_size_per_round = main_df.groupby('Round')['Average lot size'].mean().reset_index()
@@ -637,7 +637,16 @@ def mixers_fillers_section():
 warehouse_info_section()
 mixers_fillers_section()
 
+st.divider()
+st.subheader("Tables utilized")
 
+def show_table(df, name):
+    with st.expander(f"{name} Table"):
+        st.write(df)
 
-
+show_table(WAREH_SALES_AREA_DF, 'Warehouse, Salesarea')
+show_table(PRODUCT_WAREH_DF, 'Product - Warehouse')
+show_table(MIXERS_DF, 'Mixers')
+show_table(BOTTLING_LINE_DF, 'Bottling line')
+show_table(PRODUCTS_DF, 'Product')
 

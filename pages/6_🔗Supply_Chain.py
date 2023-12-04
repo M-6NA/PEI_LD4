@@ -31,8 +31,8 @@ MAIN_DATA_DIR = 'Data/MAIN_DATA_FILE.xlsx'
 def read_table_tabs(tab_name):
     tab_df = pd.read_excel(MAIN_DATA_DIR, sheet_name = tab_name)
 
-    with st.expander(f"{tab_name} Table"):
-        st.write(tab_df)
+    # with st.expander(f"{tab_name} Table"):
+    #     st.write(tab_df)
 
     return tab_df 
 
@@ -41,8 +41,8 @@ COMPONENT_DF = read_table_tabs('Component')
 PRODUCTS_DF = read_table_tabs('Product')
 FINANCE_DF = pd.read_excel('Data/FinanceReport.xlsx')
 
-with st.expander(f"Finances Table"):
-    st.write(FINANCE_DF)
+# with st.expander(f"Finances Table"):
+#     st.write(FINANCE_DF)
 
 
 
@@ -195,6 +195,8 @@ def finances_section():
         )
 
         fig.update_traces(
+            texttemplate='<b>%{y:.3s}</b>',
+            textposition='outside',
             marker=dict(
                 line=dict(
                     width=1, color='DarkSlateGray'
@@ -211,8 +213,9 @@ def finances_section():
         
     with col2:
         stock_value_components_vs_products_plot()
-    
-finances_section()
+
+with st.expander("Finances Section"):    
+    finances_section()
 
 
 # :::::::::::::::::::::::::::::::::: COMPONENTS SECTION ::::::::::::::::::::::::::::::::::
@@ -264,9 +267,9 @@ def components_section():
             )
 
         fig.update_layout(
-                title='Stock value of Components',
+                title='Stock value of Components (% of total)',
                 xaxis_title='Round',
-                yaxis_title='Stock value',
+                yaxis_title='Stock value (%)',
                 legend_title='Component',
                 legend=dict(
                     orientation='h',
@@ -386,62 +389,51 @@ def components_section():
 
     #     st.plotly_chart(fig, theme="streamlit", use_container_width=True)
 
-    # def line_plot():
-    #     main_df = COMPONENT_DF.copy()
+    def line_plot():
+        main_df = COMPONENT_DF.copy()
 
-    #     df_agg = main_df.groupby(['Component', 'Round'], as_index = False)['Stock value'].sum()
-    #     df_agg['Color'] = df_agg['Component'].map(lambda x: component_colors.get(x))
+        df_agg = main_df.groupby(['Component', 'Round'], as_index = False)['Stock value'].sum()
+        df_agg['Color'] = df_agg['Component'].map(lambda x: component_colors.get(x))
 
-    #     # sum_stock_weeks = df_agg.groupby(['Round'])
+        # sum_stock_weeks = df_agg.groupby(['Round'])
 
-    #     # st.write(df_agg)
+        # st.write(df_agg)
 
-    #     # Grouped bar plot
-    #     fig = go.Figure()
-    #     for component, data in df_agg.groupby('Component'):
-    #         fig.add_trace(go.Bar(
-    #                 x=data['Round'],
-    #                 y=data['Stock value'],
-    #                 name=component,
-    #                 marker=dict(color=component_colors[component])
-    #             )
-    #         )
+        # Line plot
+        fig = go.Figure()
+        for component, data in df_agg.groupby('Component'):
+            fig.add_trace(go.Scatter(
+                    x=data['Round'],
+                    y=data['Stock value'],
+                    mode='lines+markers',  # To display both lines and markers
+                    name=component,
+                    line=dict(color=component_colors[component], width = 4),
+                    marker=dict(color=component_colors[component], size = 8)
+                )
+            )
 
-    #     # Line plot
-    #     fig = go.Figure()
-    #     for component, data in df_agg.groupby('Component'):
-    #         fig.add_trace(go.Scatter(
-    #                 x=data['Round'],
-    #                 y=data['Stock value'],
-    #                 mode='lines+markers',  # To display both lines and markers
-    #                 name=component,
-    #                 line=dict(color=component_colors[component], width = 4),
-    #                 marker=dict(color=component_colors[component], size = 8)
-    #             )
-    #         )
+        fig.update_layout(
+            title='Stock value of Components',
+            xaxis_title='Round',
+            yaxis_title='Stock value',
+            legend_title='Component',
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=1.02,
+                xanchor='right',
+                x=1
+            ),
+            showlegend=True
+        )
 
-    #     fig.update_layout(
-    #         title='Stock value of Components',
-    #         xaxis_title='Round',
-    #         yaxis_title='Stock value',
-    #         legend_title='Component',
-    #         legend=dict(
-    #             orientation='h',
-    #             yanchor='bottom',
-    #             y=1.02,
-    #             xanchor='right',
-    #             x=1
-    #         ),
-    #         showlegend=True
-    #     )
+        fig.update_traces(
+            texttemplate='<b>%{y:.3s}</b>',
+            textposition='top center',  # Adjust text position if needed
+            textfont=dict(size=13)
+        )
 
-    #     fig.update_traces(
-    #         texttemplate='<b>%{y:.3s}</b>',
-    #         textposition='top center',  # Adjust text position if needed
-    #         textfont=dict(size=13)
-    #     )
-
-    #     st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
 
 
     def combined_plot():
@@ -526,8 +518,6 @@ def components_section():
 
     combined_plot()
 
-components_section()
-
 # :::::::::::::::::::::::::::::::::: AVG COST OF DELIVERY SECTION ::::::::::::::::::::::::::::::::::
 
 def avg_cost_of_delivery_section():
@@ -572,8 +562,6 @@ def avg_cost_of_delivery_section():
 
 
     avg_cost_of_delivery_plot()
-
-avg_cost_of_delivery_section()
 
 # :::::::::::::::::::::::::::::::::: COMPONENT OVERVIEW SECTION ::::::::::::::::::::::::::::::::::
 
@@ -680,4 +668,350 @@ def component_overview_section():
     with tab5:
         component_info_table('Vitamin C')
 
-component_overview_section()
+
+with st.expander('Components Section'):
+    components_section()
+    avg_cost_of_delivery_section()
+    component_overview_section()
+
+# :::::::::::::::::::::::::::::::::: PRODUCTION SECTION ::::::::::::::::::::::::::::::::::
+
+st.divider()
+st.subheader("Production")
+
+def production_section():
+
+    product_colors = {
+        "Fressie Orange PET": "#3498db",
+        "Fressie Orange/C-power PET": "#2ecc71",
+        "Fressie Orange/Mango PET": "#e74c3c",
+        "Fressie Orange 1 liter": "#9b59b6",
+        "Fressie Orange/Mango 1 liter": "#e67e22",
+        "Fressie Orange/Mango+C 1L": "#f1c40f"
+    }
+
+    def stock_products_weeks():
+        
+        data = {
+            'rounds': ['-2', '-1', '0', '1', '2', '3'],
+            'values': [3.6, 3.8, 3.8, 3.4, 2.3, 1.7],
+        }
+
+        # Create a trace for the line chart
+        trace = go.Scatter(
+            x=data['rounds'], 
+            y=data['values'], 
+            mode='lines+markers',
+            # text=data['values'],  # Set the text to display on markers
+            # textposition='top center',
+        )
+
+        # Create a layout for the chart
+        layout = go.Layout(
+            title='Stock products (weeks)',
+            xaxis=dict(title='Rounds'),
+            yaxis=dict(title='Values')
+        )
+
+        # Create annotations to display values next to markers
+        annotations = []
+        for i, value in enumerate(data['values']):
+            annotations.append(
+                dict(
+                    x=data['rounds'][i],
+                    y=value,
+                    xref='x',
+                    yref='y',
+                    text=f'<b>{str(value)}</b>',
+                    showarrow=False,
+                    font=dict(
+                        size=12,
+                    ),  
+                    xanchor='center',  # Center text horizontally on marker
+                    yanchor='bottom',  # Position text above the marker
+                    yshift=10  # Adjust vertical position
+                )
+            )
+
+        layout['annotations'] = annotations
+
+        # Combine trace and layout to create the figure
+        fig = go.Figure(
+            data=[trace], 
+            layout=layout
+        )
+
+        fig.update_traces(
+            line=dict(width=4, color = 'orange'), 
+            marker=dict(size=8, color = 'grey')
+        )
+
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+    def stock_value_products():
+        main_df = PRODUCTS_DF.copy()
+
+        df_agg = main_df.groupby(['Product', 'Round'], as_index = False)['Stock value'].sum()
+        df_agg['Color'] = df_agg['Product'].map(lambda x: product_colors.get(x))
+
+        raw_total_per_round = main_df.groupby(['Round'], as_index = False)['Stock value'].sum()
+        # st.write(raw_total_per_round)
+
+        merged_df = df_agg.merge(raw_total_per_round, on='Round', suffixes=('_product', '_total'))
+
+        # Calculate the percentage
+        merged_df['Stock value %'] = (merged_df['Stock value_product'] / merged_df['Stock value_total']) * 100
+
+        # st.write(merged_df)
+
+        fig = go.Figure()
+        for product, data in merged_df.groupby('Product'):
+            fig.add_trace(go.Scatter(
+                    x=data['Round'],
+                    y=data['Stock value %'],
+                    mode='lines',
+                    # stackgroup='zero',  # Adding stackgroup for stacking the areas
+                    fill='tozeroy',   # Filling the area to the x-axis
+                    name=product,
+                    line=dict(color=product_colors[product])
+                )
+            )
+
+        fig.update_layout(
+                title='Stock value of Products (% of total)',
+                xaxis_title='Round',
+                yaxis_title='Stock value (%)',
+                legend_title='Product',
+                legend=dict(
+                    orientation='h', 
+                    yanchor='top',
+                    y=-0.2,
+                    xanchor='right',
+                    x=1, 
+                    title = '',
+                    itemwidth=30,  # Adjust itemwidth to fit legend items horizontally
+                    # traceorder='normal'
+                ),
+                showlegend=True
+        )
+
+        st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+
+    def combined_plot_2():
+        main_df = PRODUCTS_DF.copy()
+
+        df_agg_bar = main_df.groupby(['Product', 'Round'], as_index = False)['Production plan adherence (%)'].sum()
+        df_agg_bar['Production plan adherence (%)'] *= 100
+        df_agg_bar['Color'] = df_agg_bar['Product'].map(lambda x: product_colors.get(x))
+
+        df_agg_line = main_df.groupby(['Product', 'Round'], as_index = False)['Production batches previous round'].sum()
+        df_agg_line['Color'] = df_agg_line['Product'].map(lambda x: product_colors.get(x))
+
+
+        # Grouped Bar plot
+        fig = go.Figure()
+        for product, data in df_agg_bar.groupby('Product'):
+            fig.add_trace(go.Bar(
+                    x=data['Round'],
+                    y=data['Production plan adherence (%)'],
+                    name=product,
+                    marker=dict(color=product_colors[product])
+                )
+            )
+
+        fig.update_traces(
+            texttemplate='<b>%{y:.3s}</b>',
+            textposition='inside',
+            marker=dict(
+                line=dict(
+                    width=1, color='DarkSlateGray'
+                    )
+                )
+        )
+
+        # Add the line plot with a secondary y-axis
+        for product, data in df_agg_line.groupby('Product'):
+            fig.add_trace(go.Scatter(
+                    x=data['Round'],
+                    y=data['Production batches previous round'],
+                    mode='lines+markers',  # To display both lines and markers
+                    name=product,
+                    line=dict(
+                        color=product_colors[product], 
+                        width = 4),
+                    marker=dict(
+                        color='#4a4e69', 
+                        size = 8),
+                    text = data['Production batches previous round'],
+                    textposition='top center',
+                    texttemplate='<b>%{y:.1s}</b>',
+                    yaxis='y2', 
+                )
+            )
+
+        fig.update_layout(
+            title='Combined Production Analysis',
+            xaxis_title='',
+            yaxis_title= 'Production plan adherence (%)',
+            legend_title='',
+            legend=dict(
+                orientation='h',
+                yanchor='top',
+                y=-0.2,
+                xanchor='right',
+                x=0.9,
+            ),
+            showlegend=True,
+            yaxis=dict(title='Product plan adherence (%)', side='left'),  # Primary y-axis for bars
+            yaxis2=dict(title='Product batches previous round', side='right', overlaying='y', showgrid=False), 
+        )
+
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+    def gross_margin_week_plot():
+        main_df = PRODUCTS_DF.copy()
+
+        df_agg = main_df.groupby(['Product', 'Round'], as_index = False)['Gross margin per week'].sum()
+        df_agg['Color'] = df_agg['Product'].map(lambda x: product_colors.get(x))
+
+        fig = go.Figure()
+        for product, data in df_agg.groupby('Product'):
+            fig.add_trace(go.Scatter(
+                    x=data['Round'],
+                    y=data['Gross margin per week'],
+                    mode='lines+markers', 
+                    name=product,
+                    line=dict(color=product_colors[product], width = 4),
+                    marker=dict(color='#4a4e69', size = 8)
+                )
+            )
+
+        fig.update_layout(
+            title='Gross margin per week',
+            xaxis_title='Round',
+            yaxis_title='Gross margin per week',
+            legend_title='',
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=1.02,
+                xanchor='right',
+                x=1
+            ),
+            showlegend=True
+        )
+
+        fig.update_traces(
+            texttemplate='<b>%{y:.3s}</b>',
+            textposition='top center',  # Adjust text position if needed
+            textfont=dict(size=13)
+        )
+
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+    def obsoletes_per_week_plot():
+        main_df = PRODUCTS_DF.copy()
+
+        df_agg = main_df.groupby(['Product', 'Round'], as_index = False)['Obsoletes per week (value)'].sum()
+        df_agg['Color'] = df_agg['Product'].map(lambda x: product_colors.get(x))
+
+        fig = go.Figure()
+        for product, data in df_agg.groupby('Product'):
+            fig.add_trace(go.Bar(
+                    x=data['Round'],
+                    y=data['Obsoletes per week (value)'],
+                    name=product,
+                    marker=dict(color=product_colors[product])
+                )
+            )
+
+        fig.update_layout(
+            title='Obsoletes per week',
+            xaxis_title='Round',
+            yaxis_title= 'Obsoletes per week (value)',
+            legend_title='',
+            legend=dict(
+                orientation='h',
+                yanchor='bottom',
+                y=1.02,
+                xanchor='right',
+                x=1,
+                title = '',
+            ),
+            showlegend=True,
+            barmode='stack'
+        )
+
+        fig.update_traces(
+            texttemplate='<b>%{y:.2s}</b>',
+            textposition='inside',
+            marker=dict(
+                line=dict(
+                    width=1, color='DarkSlateGray'
+                    )
+                )
+        )
+
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+    def demand_units_per_orderline_plot():
+        main_df = PRODUCTS_DF.copy()
+
+        df_agg = main_df.groupby(['Product', 'Round'], as_index = False)[['Demand per week (units)', 'Order lines per week']].sum()
+        df_agg['Demand units per orderline'] = df_agg['Demand per week (units)'] / df_agg['Order lines per week']
+        df_agg['Color'] = df_agg['Product'].map(lambda x: product_colors.get(x))
+
+        fig = go.Figure(
+            data=[go.Pie(
+                labels=df_agg['Product'], 
+                values=df_agg['Demand units per orderline'],
+                marker=dict(colors=df_agg['Color'], line=dict(color='#000000', width=1)),
+            )]
+        )
+
+        fig.update_layout(
+            title='Demand Units per Order Line',
+            title_font=dict(size=20),
+            font=dict(size=14)
+        )
+
+        fig.update_traces(
+            # texttemplate='<b>{y:.3f}</b>',
+            textposition='inside',
+            marker=dict(
+                line=dict(
+                    width=1, color='DarkSlateGray'
+                    )
+                )
+        )
+
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+    col1, col2 = st.columns(2, gap = "small")
+
+    with col1:
+        stock_products_weeks()
+    
+    with col2:
+        stock_value_products()
+
+    combined_plot_2()
+    gross_margin_week_plot()
+    obsoletes_per_week_plot()
+    demand_units_per_orderline_plot()
+
+with st.expander('Production Section'):
+    production_section()
+
+# :::::::::::::::::::::::::::::::::: TABLES UTILIZED SECTION ::::::::::::::::::::::::::::::::::
+
+st.divider()
+st.subheader("Tables utilized")
+
+def show_table(df, name):
+    with st.expander(f"{name} Table"):
+        st.write(df)
+
+show_table(COMPONENT_DF, 'Component')
+show_table(PRODUCTS_DF, 'Product')
+show_table(FINANCE_DF, 'Finances')

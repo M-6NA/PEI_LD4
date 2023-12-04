@@ -142,7 +142,11 @@ def plot_data_h_bar(data, name):
     df = pd.DataFrame(data)
 
     # Melt the DataFrame to have a suitable format for the plot
-    melted_df = df.melt(id_vars='Round', var_name='Purchase_Type', value_name='Value')
+    melted_df = df.melt(
+        id_vars='Round', 
+        var_name='Purchase_Type', 
+        value_name='Value'
+    )
 
     # Plotting the horizontal clustered bar chart
     fig = px.bar(
