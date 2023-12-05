@@ -283,31 +283,31 @@ round_4_data = added_sup_df[added_sup_df['Round'] == 4]
 
 st.subheader("Worldwide Suppliers")
 # Displaying the maps in tabs for each round
-tab2, tab3, tab4, tab5 = st.tabs(["Round 1", "Round 2", "Round 3", "Round 4"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Round 0","Round 1", "Round 2", "Round 3", "Round 4"])
 
-# with tab1:
+with tab1:
 
-#     col1, col2 = st.columns(2, gap = "small")
+    col1, col2 = st.columns(2, gap = "small")
     
-#     with col1:
-#         display_world_map(round_0_data)
+    with col1:
+        display_world_map(round_0_data)
 
-#     with col2:
+    with col2:
 
-#         data_0 = {
-#             'Trade unit':       ['Drum',        'Pallet',       'Pallet',       'Tank',         'IBC'],
-#             'Item':             ['Vitamin C',   'Pack1L',       'PET',          'Orange',       'Mango'],
-#             'Order size':       ['2,775',       '1,173,483',    '1,068,679',    '288,000',      '14,893'],
-#             'Purchases':        [5.3,            5.2,            5.3,            4.9,            5.2],
-#             'Purchase value':   ['€50,446' ,    '€160,052',     '€308,801',     '€737,683',     '€87,285'],
-#             'Transport costs':  ['€6,081',      '€8,797',       '€145,501',     '€69,102',      '€6,240']
-#         }
+        data_0 = {
+            'Trade unit':       ['Drum',        'Pallet',       'Pallet',       'Tank',         'IBC'],
+            'Item':             ['Vitamin C',   'Pack1L',       'PET',          'Orange',       'Mango'],
+            'Order size':       ['2,775',       '1,173,483',    '1,068,679',    '288,000',      '14,893'],
+            'Purchases':        [5.3,            5.2,            5.3,            4.9,            5.2],
+            'Purchase value':   ['€50,446' ,    '€160,052',     '€308,801',     '€737,683',     '€87,285'],
+            'Transport costs':  ['€6,081',      '€8,797',       '€145,501',     '€69,102',      '€6,240']
+        }
 
-#         data_round_0 = pd.DataFrame(data_0)
+        data_round_0 = pd.DataFrame(data_0)
 
-#         display_report(data_round_0)
+        display_report(data_round_0)
 
-#         display_quant_per_unit()
+        display_quant_per_unit()
     
 with tab2:
 
