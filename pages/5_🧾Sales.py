@@ -41,6 +41,16 @@ PRODUCT_DF = read_table_tabs('Product')
 CUSTOMER_PRODUCT_DF = read_table_tabs('Customer - Product')
 # st.write(CUSTOMERS_DF)
 
+round_colors = {
+        -2: "#8ecae6",
+        -1: "#219ebc",
+        0: "#126782",
+        1: "#023047",
+        2: "#ffb703",
+        3: "#fd9e02",
+        4: "#8338ec"
+    }
+
 # :::::::::::::::::::::::::::::::::: IMPORTANT KPI's SECTION ::::::::::::::::::::::::::::::::::
 
 st.divider()
@@ -104,23 +114,23 @@ def important_kpis():
 
 
     data_roi = {
-        'rounds': ['-2', '-1', '0', '1', '2', '3'],
-        'values': [2.8, -7, -7, 10.3, -1.1, 9.6],
+        'rounds': ['-2', '-1', '0', '1', '2', '3', '4'],
+        'values': [2.8, -7, -7, 10.3, -1.1, 9.6, -16.2],
     }
 
     data_gross_margin = {
-        'rounds': ['-2', '-1', '0', '1', '2', '3'],
-        'values': [1667132, 1322553, 1322553, 1917418, 1703327, 2020605],
+        'rounds': ['-2', '-1', '0', '1', '2', '3', '4'],
+        'values': [1667132, 1322553, 1322553, 1917418, 1703327, 2020605, 840913],
     }
 
     data_obsolete_prod = {
-        'rounds': ['-2', '-1', '0', '1', '2', '3'],
-        'values': [11.8, 11.3, 11.3, 4.0, 9.0, 2.4],
+        'rounds': ['-2', '-1', '0', '1', '2', '3', '4'],
+        'values': [11.8, 11.3, 11.3, 4.0, 9.0, 2.4, 0.9],
     }
 
     data_service_level = {
-        'rounds': ['-2', '-1', '0', '1', '2', '3'],
-        'values': [95.1, 92.5, 92.5, 97.3, 95.0, 94.9],
+        'rounds': ['-2', '-1', '0', '1', '2', '3', '4'],
+        'values': [95.1, 92.5, 92.5, 97.3, 95.0, 94.9, 87.4],
     }
 
 
@@ -200,14 +210,15 @@ st.subheader('Components')
 def components_section():
     
 
-    round_colors = {
-        -2: "#8ecae6",
-        -1: "#219ebc",
-        0: "#126782",
-        1: "#023047",
-        2: "#ffb703",
-        3: "#fd9e02"
-    }
+    # round_colors = {
+    #     -2: "#8ecae6",
+    #     -1: "#219ebc",
+    #     0: "#126782",
+    #     1: "#023047",
+    #     2: "#ffb703",
+    #     3: "#fd9e02",
+    #     4: "#8338ec"
+    # }
 
 
     def section_bar_plots(col_name, plot_name):
@@ -291,14 +302,15 @@ def production_section():
         "Fressie Orange/Mango+C 1L": "#e76f51"
     }
 
-    round_colors = {
-        -2: "#8ecae6",
-        -1: "#219ebc",
-        0: "#126782",
-        1: "#023047",
-        2: "#ffb703",
-        3: "#fd9e02"
-    }
+    # round_colors = {
+    #     -2: "#8ecae6",
+    #     -1: "#219ebc",
+    #     0: "#126782",
+    #     1: "#023047",
+    #     2: "#ffb703",
+    #     3: "#fd9e02",
+    #     4: "#8338ec"
+    # }
 
     def product_section_bar_plots(col_name, plot_name):
         main_df = PRODUCT_DF.copy()
@@ -371,14 +383,14 @@ st.subheader('Customers')
 
 def customers_section():
 
-    round_colors = {
-        -2: "#8ecae6",
-        -1: "#219ebc",
-        0: "#126782",
-        1: "#023047",
-        2: "#ffb703",
-        3: "#fd9e02"
-    }
+    # round_colors = {
+    #     -2: "#8ecae6",
+    #     -1: "#219ebc",
+    #     0: "#126782",
+    #     1: "#023047",
+    #     2: "#ffb703",
+    #     3: "#fd9e02"
+    # }
     
     def customer_section_bar_plots(cust_name, col_name, plot_name):
         main_df = CUSTOMER_PRODUCT_DF.copy()
@@ -450,8 +462,6 @@ def customers_section():
 
     with tab3:
         customer_section_bar_plots('Colmart','Additional sales as a result of promotions (%)', 'Additional sales as a result of promotions (%) | Colmart')
-
-
 
 customers_section()
 

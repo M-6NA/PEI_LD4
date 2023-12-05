@@ -277,11 +277,12 @@ round_0_data = added_sup_df[added_sup_df['Round'] == 0]
 round_1_data = added_sup_df[added_sup_df['Round'] == 1]
 round_2_data = added_sup_df[added_sup_df['Round'] == 2]
 round_3_data = added_sup_df[added_sup_df['Round'] == 3]
+round_4_data = added_sup_df[added_sup_df['Round'] == 4]
 
 
 st.subheader("Worldwide Suppliers")
 # Displaying the maps in tabs for each round
-tab1, tab2, tab3, tab4 = st.tabs(["Round 0", "Round 1", "Round 2", "Round 3"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Round 0", "Round 1", "Round 2", "Round 3", "Round 4"])
 
 with tab1:
 
@@ -374,6 +375,29 @@ with tab4:
         data_round_3 = pd.DataFrame(data_3)
 
         display_report(data_round_3)
+
+        display_quant_per_unit()
+
+with tab5:
+
+    col1, col2 = st.columns(2, gap = "small")
+    
+    with col1:
+        display_world_map(round_4_data)
+    with col2:
+         
+        data_4 = {
+            'Trade unit':       ['Drum',        'Pallet',       'Pallet',       'Tank',     'Tank'],
+            'Item':             ['Vitamin C',   'Pack1L',       'PET',          'Orange',   'Mango'],
+            'Order size':       ['1,897',       '286,243',      '490,166',      '185,567',  '60,000'],
+            'Purchases':        [9.8,           20.1,           20.9,           10.5,         2.4],
+            'Purchase value':   ['€57,369',     '€155,555',     '€302,041',     '€715,078', '€87,480'],
+            'Transport costs':  ['€6,131',      '€12,121',      '€138,892',     '€63,870',  '€4,398']
+        }
+
+        data_round_4 = pd.DataFrame(data_4)
+
+        display_report(data_round_4)
 
         display_quant_per_unit()
 

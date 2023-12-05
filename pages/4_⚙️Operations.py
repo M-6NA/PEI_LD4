@@ -301,14 +301,15 @@ def warehouse_info_section():
         )
 
 
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
             "Overview",
             "Round -2",
             "Round -1",
             "Round 0",
             "Round 1",
             "Round 2",
-            "Round 3"
+            "Round 3",
+            "Round 4"
     ])
 
  
@@ -504,6 +505,25 @@ def warehouse_info_section():
         #     unsafe_allow_html=True
         # )
 
+    with tab8:
+        # Cube utilization text
+        st.markdown(
+            f"""
+            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%) | Round: 4</h4></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        ) 
+        col1, col2, col3 = st.columns(3, gap = "small")
+
+        with col1:
+            plot_cube_util_gauge(4,'Raw materials warehouse')
+        with col2:
+            plot_cube_util_gauge(4,'Tank yard')
+        with col3:
+            plot_cube_util_gauge(4,'Finished goods warehouse')
+
 
 def mixers_fillers_section():
     st.divider()
@@ -601,13 +621,14 @@ def mixers_fillers_section():
 
     with col1:
         
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
                 "Round -2",
                 "Round -1",
                 "Round 0",
                 "Round 1",
                 "Round 2",
-                "Round 3"
+                "Round 3",
+                "Round 4",
 
         ])
         
@@ -630,6 +651,9 @@ def mixers_fillers_section():
 
         with tab6:
             plot_bottling_line_usage(3, 'AllFill 1')
+
+        with tab7:
+            plot_bottling_line_usage(4, 'AllFill 1')
 
     with col2:
         plot_avg_lot_size_per_round()

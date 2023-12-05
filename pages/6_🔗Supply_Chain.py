@@ -45,16 +45,6 @@ FINANCE_DF = pd.read_excel('Data/FinanceReport.xlsx')
 #     st.write(FINANCE_DF)
 
 
-# :::::::::::::::::::::::::::::::::: IMPORTANT KPI's SECTION ::::::::::::::::::::::::::::::::::
-
-st.divider()
-st.subheader("Important KPI's")
-
-def important_kpis():
-    pass
-
-important_kpis()
-
 # :::::::::::::::::::::::::::::::::: FINANCES SECTION ::::::::::::::::::::::::::::::::::
 st.divider()
 st.subheader("Finances")
@@ -105,7 +95,7 @@ def finances_section():
         
         fig.update_xaxes(
             tickvals=percentage_data.index, 
-            ticktext=['-2', '-1', '0', '1', '2', '3']
+            ticktext=['-2', '-1', '0', '1', '2', '3', '4']
         )
 
         fig.update_layout(
@@ -296,8 +286,8 @@ def components_section():
     def stock_components_weeks():
         
         data = {
-            'rounds': ['-2', '-1', '0', '1', '2', '3'],
-            'values': [6.5, 6.5, 6.5, 5.0, 8.9, 7.0],
+            'rounds': ['-2', '-1', '0', '1', '2', '3', '4'],
+            'values': [6.5, 6.5, 6.5, 5.0, 8.9, 7.0, 4.1],
         }
 
         # Create a trace for the line chart
@@ -702,8 +692,8 @@ def production_section():
     def stock_products_weeks():
         
         data = {
-            'rounds': ['-2', '-1', '0', '1', '2', '3'],
-            'values': [3.6, 3.8, 3.8, 3.4, 2.3, 1.7],
+            'rounds': ['-2', '-1', '0', '1', '2', '3', '4'],
+            'values': [3.6, 3.8, 3.8, 3.4, 2.3, 1.7, 1.1],
         }
 
         # Create a trace for the line chart
