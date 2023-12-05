@@ -175,7 +175,7 @@ def products_section():
 
 products_section()
 
-# # # ::::::::::::::::: PLOTLY WORLD MAP ::::::::::::::::: 
+# # # ::::::::::::::::: PLOTLY WORLD MAP :::::::::::::::::  
 
 # def supply_world_map():
 

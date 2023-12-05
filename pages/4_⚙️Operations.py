@@ -513,7 +513,7 @@ def warehouse_info_section():
                 <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%) | Round: 4</h4></div>
             </div>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True 
         ) 
         col1, col2, col3 = st.columns(3, gap = "small")
 

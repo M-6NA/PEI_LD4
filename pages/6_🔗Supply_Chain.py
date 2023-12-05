@@ -92,7 +92,7 @@ def finances_section():
                 ),  
                 hovertemplate='%{y:.2f}%<extra></extra>',
             ))
-        
+         
         fig.update_xaxes(
             tickvals=percentage_data.index, 
             ticktext=['-2', '-1', '0', '1', '2', '3', '4']

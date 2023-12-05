@@ -382,7 +382,7 @@ with tab5:
 
     col1, col2 = st.columns(2, gap = "small")
     
-    with col1:
+    with col1: 
         display_world_map(round_4_data)
     with col2:
          
