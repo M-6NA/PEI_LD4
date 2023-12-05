@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 import pandas as pd
 
 # :::::::::::::::::::::::::::::::::: PAGE CONFIGURATION ::::::::::::::::::::::::::::::::::
+# test
 # Settings for the webpage
 st.set_page_config(
     page_title = "Sales",

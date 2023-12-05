@@ -7,6 +7,7 @@ import pandas as pd
 from PIL import Image
 
 # :::::::::::::::::::::::::::::::::: PAGE CONFIGURATION :::::::::::::::::::::::::::::::::: 
+# test
 # Settings for the webpage
 st.set_page_config( 
     page_title = "Home",
