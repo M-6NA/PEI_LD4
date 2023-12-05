@@ -41,6 +41,99 @@ PRODUCT_DF = read_table_tabs('Product')
 CUSTOMER_PRODUCT_DF = read_table_tabs('Customer - Product')
 # st.write(CUSTOMERS_DF)
 
+# :::::::::::::::::::::::::::::::::: IMPORTANT KPI's SECTION ::::::::::::::::::::::::::::::::::
+
+st.divider()
+st.subheader("Important KPI's")
+
+def important_kpis():
+    
+    def static_plot(data, title):
+        # Create a trace for the line chart
+        trace = go.Scatter(
+            x=data['rounds'], 
+            y=data['values'], 
+            mode='lines+markers',
+            # text=data['values'],  # Set the text to display on markers
+            # textposition='top center',
+        )
+
+        # Create a layout for the chart
+        layout = go.Layout(
+            title=title,
+            xaxis=dict(title='Rounds'),
+            yaxis=dict(title='')
+        )
+
+        # Create annotations to display values next to markers
+        annotations = []
+        for i, value in enumerate(data['values']):
+            annotations.append(
+                dict(
+                    x=data['rounds'][i],
+                    y=value,
+                    xref='x',
+                    yref='y',
+                    text=f'<b>{str(value)}</b>',
+                    showarrow=False,
+                    font=dict(
+                        size=12,
+                    ),  
+                    xanchor='center',  # Center text horizontally on marker
+                    yanchor='bottom',  # Position text above the marker
+                    yshift=10  # Adjust vertical position
+                )
+            )
+
+        layout['annotations'] = annotations
+
+        # Combine trace and layout to create the figure
+        fig = go.Figure(
+            data=[trace], 
+            layout=layout
+        )
+
+        fig.update_traces(
+            line=dict(width=4, color = 'orange'), 
+            marker=dict(size=8, color = 'grey')
+        )
+
+        fig.update_layout(height=300)
+
+        st.plotly_chart(fig, theme="streamlit", use_container_width=True)
+
+
+    data_roi = {
+        'rounds': ['-2', '-1', '0', '1', '2', '3'],
+        'values': [2.8, -7, -7, 10.3, -1.1, 9.6],
+    }
+
+    data_gross_margin = {
+        'rounds': ['-2', '-1', '0', '1', '2', '3'],
+        'values': [1667132, 1322553, 1322553, 1917418, 1703327, 2020605],
+    }
+
+    data_obsolete_prod = {
+        'rounds': ['-2', '-1', '0', '1', '2', '3'],
+        'values': [11.8, 11.3, 11.3, 4.0, 9.0, 2.4],
+    }
+
+    data_service_level = {
+        'rounds': ['-2', '-1', '0', '1', '2', '3'],
+        'values': [95.1, 92.5, 92.5, 97.3, 95.0, 94.9],
+    }
+
+
+    col1, col2 = st.columns(2, gap = "small")
+
+    with col1:
+        static_plot(data_roi, 'ROI(%)')
+        static_plot(data_obsolete_prod, 'Obsolete products (%)')
+    with col2:
+        static_plot(data_gross_margin, 'Gross margin (customer)')
+        static_plot(data_service_level, 'Service level outbound order lines (%)')
+
+important_kpis()
 
 # :::::::::::::::::::::::::::::::::: SERVICE LEVEL SECTION ::::::::::::::::::::::::::::::::::
 st.divider() 

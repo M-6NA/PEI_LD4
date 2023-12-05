@@ -45,6 +45,15 @@ FINANCE_DF = pd.read_excel('Data/FinanceReport.xlsx')
 #     st.write(FINANCE_DF)
 
 
+# :::::::::::::::::::::::::::::::::: IMPORTANT KPI's SECTION ::::::::::::::::::::::::::::::::::
+
+st.divider()
+st.subheader("Important KPI's")
+
+def important_kpis():
+    pass
+
+important_kpis()
 
 # :::::::::::::::::::::::::::::::::: FINANCES SECTION ::::::::::::::::::::::::::::::::::
 st.divider()
@@ -686,7 +695,7 @@ def production_section():
         "Fressie Orange/C-power PET": "#2ecc71",
         "Fressie Orange/Mango PET": "#e74c3c",
         "Fressie Orange 1 liter": "#9b59b6",
-        "Fressie Orange/Mango 1 liter": "#e67e22",
+        "Fressie Orange/Mango 1 liter": "#e67e22", 
         "Fressie Orange/Mango+C 1L": "#f1c40f"
     }
 
