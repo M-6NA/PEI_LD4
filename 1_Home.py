@@ -16,6 +16,7 @@ st.set_page_config(
 
 )
 
+st.balloons()
 # st.sidebar.image('images/orange_icon_2.png', use_column_width=True)
 
 
