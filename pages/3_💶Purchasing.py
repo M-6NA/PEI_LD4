@@ -279,11 +279,12 @@ round_1_data = added_sup_df[added_sup_df['Round'] == 1]
 round_2_data = added_sup_df[added_sup_df['Round'] == 2]
 round_3_data = added_sup_df[added_sup_df['Round'] == 3]
 round_4_data = added_sup_df[added_sup_df['Round'] == 4]
+round_5_data = added_sup_df[added_sup_df['Round'] == 5]
 
 
 st.subheader("Worldwide Suppliers")
 # Displaying the maps in tabs for each round
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Round 0","Round 1", "Round 2", "Round 3", "Round 4"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Round 0","Round 1", "Round 2", "Round 3", "Round 4", "Round 5"])
 
 with tab1:
 
@@ -390,10 +391,34 @@ with tab5:
         data_4 = {
             'Trade unit':       ['Drum',        'Pallet',       'Pallet',       'Tank',     'Tank'],
             'Item':             ['Vitamin C',   'Pack1L',       'PET',          'Orange',   'Mango'],
-            'Order size':       ['1,897',       '286,243',      '490,166',      '185,567',  '60,000'],
+            'Order size':       ['1,366',       '286,243',      '490,166',      '130,423',  '30,000'],
             'Purchases':        [9.8,           20.1,           20.9,           10.5,         2.4],
             'Purchase value':   ['€57,369',     '€155,555',     '€302,041',     '€715,078', '€87,480'],
-            'Transport costs':  ['€6,131',      '€12,121',      '€138,892',     '€63,870',  '€4,398']
+            'Transport costs':  ['€6,131',      '€12,121',      '€138,892',     '€97,287',  '€4,309']
+        }
+
+        data_round_4 = pd.DataFrame(data_4)
+
+        display_report(data_round_4)
+
+        display_quant_per_unit()
+
+
+with tab6:
+
+    col1, col2 = st.columns(2, gap = "small")
+    
+    with col1: 
+        display_world_map(round_5_data)
+    with col2:
+         
+        data_4 = {
+            'Trade unit':       ['Drum',        'Pallet',       'Pallet',       'Tank',     'Tank'],
+            'Item':             ['Vitamin C',   'Pack1L',       'PET',          'Orange',   'Mango'],
+            'Order size':       ['2,005',       '324,600',      '284,149',      '141,402',  '7,984'],
+            'Purchases':        [6.8,           17.4,               18.5,           9.5,         9.2],
+            'Purchase value':   ['€54,386',     '€152,543	',     '€291,057',     '€639,936', '€88,319'],
+            'Transport costs':  ['€2,321',      '€11,459	',      '€133,565',     '€66,531',  '€6,630']
         }
 
         data_round_4 = pd.DataFrame(data_4)

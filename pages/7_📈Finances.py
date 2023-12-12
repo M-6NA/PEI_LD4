@@ -22,11 +22,8 @@ st.title("📈 Finances")
 st.divider()
 
 # ::::::::::::::::: DATA PLOTS AND TABLES ::::::::::::::::: 
-
-# Table for finances
 FINANCE_DF = pd.read_excel('Data/FinanceReport.xlsx')
-with st.expander("Finance Report data preview"):
-    st.write(FINANCE_DF)
+ROUND_VALUES = [-2, -1, 0, 1, 2, 3, 4]
 
 # ::::::::::::::::: HELPER FUNCTIONS ::::::::::::::::: 
 
@@ -262,9 +259,23 @@ def plot_invest(keyword):
 
     st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
 
-# ::::::::::::::::: REALIZED REVENUE SECTION ::::::::::::::::: 
-st.divider()
+# ::::::::::::::::: SUM OF ALL SECTION ::::::::::::::::: 
 st.subheader("Revenue")
+
+def sum_of_all_section():
+    # main_df = FINANCE_DF.copy()
+
+    # selected_rows = main_df[main_df['Round'].isin(ROUND_VALUES) & main_df['Realized revenue - Bonus or penalties'].notna() & main_df['Realized revenue'].notna() & main_df['Gross margin - Cost of goods sold - Purchase value'].notna()]
+
+    # st.write(selected_rows) 
+    pass
+
+
+sum_of_all_section()
+
+
+
+# ::::::::::::::::: REALIZED REVENUE SECTION ::::::::::::::::: 
 
 def realized_revenue_section():
 
@@ -359,3 +370,7 @@ def investment_section():
     plot_invest('Investment')
 
 investment_section()
+
+# Table for finances
+with st.expander("Finance Report data preview"):
+    st.write(FINANCE_DF)

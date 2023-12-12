@@ -40,6 +40,7 @@ CUSTOMERS_DF = read_table_tabs('Customer')
 SUPPLIERS_DF = read_table_tabs('Supplier')
 PRODUCT_DF = read_table_tabs('Product')
 CUSTOMER_PRODUCT_DF = read_table_tabs('Customer - Product')
+FINANCE_DF = pd.read_excel('Data/FinanceReport.xlsx')
 # st.write(CUSTOMERS_DF)
 
 round_colors = {
@@ -49,7 +50,8 @@ round_colors = {
         1: "#023047",
         2: "#ffb703",
         3: "#fd9e02",
-        4: "#8338ec"
+        4: "#8338ec",
+        5: "#06d6a0"
     }
 
 # :::::::::::::::::::::::::::::::::: IMPORTANT KPI's SECTION ::::::::::::::::::::::::::::::::::
@@ -113,35 +115,114 @@ def important_kpis():
 
         st.plotly_chart(fig, theme="streamlit", use_container_width=True)
 
+    def finance_plot(val, plot_title):
+        main_df = FINANCE_DF.copy().T.reset_index()
+        main_df.columns = main_df.iloc[0]
+        main_df = main_df.drop(0)
 
-    data_roi = {
-        'rounds': ['-2', '-1', '0', '1', '2', '3', '4'],
-        'values': [2.8, -7, -7, 10.3, -1.1, 9.6, -16.2],
-    }
+        main_df = main_df[['Round', val]]
+        main_df.columns = ['Round', val]
 
-    data_gross_margin = {
-        'rounds': ['-2', '-1', '0', '1', '2', '3', '4'],
-        'values': [1667132, 1322553, 1322553, 1917418, 1703327, 2020605, 840913],
-    } 
+        # st.write(main_df)
+
+        main_df['Round'] = pd.to_numeric(main_df['Round'])
+        main_df[val] = pd.to_numeric(main_df[val])
+
+        if val == "ROI":
+            main_df[val] = main_df[val] * 100
+
+        fig = px.line(
+            main_df, 
+            x='Round', 
+            y=val, 
+            title=plot_title,
+            line_shape='linear',
+        )
+
+        fig.update_layout(height=300)
+        fig.update_xaxes(tickvals=sorted(main_df['Round'])) 
+        fig.update_traces(line=dict(width=4, color='orange'), mode='lines+markers', marker=dict(size=8, color='grey'))
+
+        # Annotations with rounded values
+        annotations = []
+        for i, row in main_df.iterrows():
+            value_text = f"<b>{row[val]:.1f}</b>"  # Formatting the value to one decimal place
+            annotations.append(
+                dict(
+                    x=row['Round'],
+                    y=row[val],
+                    xref='x',
+                    yref='y',
+                    text=value_text,
+                    showarrow=False,
+                    font=dict(size=12),
+                    xanchor='center',
+                    yanchor='bottom',
+                    yshift=10
+                )
+            )
+
+        fig.update_layout(annotations=annotations)
+
+        st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+
+
+
+        # main_df = FINANCE_DF.copy().T.reset_index()
+        # main_df.columns = main_df.iloc[0]  # Set the first row as column names
+        # main_df = main_df.drop(0)  # Drop the first two rows
+
+
+        # main_df = main_df[['Round', val]]  # Select the 'Round' and the specified value column
+        # main_df.columns = ['Round', val]   # Rename the columns for clarity
+
+        # st.write(main_df)
+
+        # main_df['Round'] = pd.to_numeric(main_df['Round'])
+        # main_df[val] = pd.to_numeric(main_df[val])
+
+        # # st.write(main_df)
+
+        # if val == "ROI":
+        #     main_df[val] = pd.to_numeric(main_df[val])*100
+            
+    
+        # fig = px.line(
+        #     main_df, 
+        #     x='Round', 
+        #     y=val, 
+        #     title=plot_title, 
+        #     # color_discrete_sequence=color_palette,
+        #     line_shape = 'linear',
+        # )
+
+        
+        # fig.update_layout(height=300)
+        # fig.update_xaxes(tickvals=sorted(main_df['Round']))
+
+        # fig.update_traces(line=dict(width=4, color = 'orange'), mode='lines+markers', marker=dict(size=8, color = 'grey'))
+
+        # st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+
 
     data_obsolete_prod = {
-        'rounds': ['-2', '-1', '0', '1', '2', '3', '4'],
-        'values': [11.8, 11.3, 11.3, 4.0, 9.0, 2.4, 0.9],
+        'rounds': ['-2', '-1', '0', '1', '2', '3', '4', '5'],
+        'values': [11.8, 11.3, 11.3, 4.0, 9.0, 2.4, 0.9, 1.4],
     }
 
     data_service_level = {
-        'rounds': ['-2', '-1', '0', '1', '2', '3', '4'],
-        'values': [95.1, 92.5, 92.5, 97.3, 95.0, 94.9, 87.4],
+        'rounds': ['-2', '-1', '0', '1', '2', '3', '4', '5'],
+        'values': [95.1, 92.5, 92.5, 97.3, 95.0, 94.9, 87.4, 97.4],
     }
 
 
     col1, col2 = st.columns(2, gap = "small")
 
     with col1:
-        static_plot(data_roi, 'ROI(%)')
+        finance_plot('ROI', 'ROI(%)')
         static_plot(data_obsolete_prod, 'Obsolete products (%)')
     with col2:
-        static_plot(data_gross_margin, 'Gross margin (customer)')
+        finance_plot('Gross margin', 'Gross margin (customer)')
         static_plot(data_service_level, 'Service level outbound order lines (%)')
 
 important_kpis()

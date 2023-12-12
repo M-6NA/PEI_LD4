@@ -30,45 +30,95 @@ st.subheader("Generic information")
 
 def generic_section():
 
-    finance_df = pd.read_excel('Data/FinanceReport.xlsx')
+    FINANCE_DF = pd.read_excel('Data/FinanceReport.xlsx')
     
     def finance_plot(val):
 
-        main_df = finance_df.copy().T.reset_index()
-        main_df.columns = main_df.iloc[0]  # Set the first row as column names
-        main_df = main_df.drop(0)  # Drop the first two rows
+        # main_df = finance_df.copy().T.reset_index()
+        # main_df.columns = main_df.iloc[0]  # Set the first row as column names
+        # main_df = main_df.drop(0)  # Drop the first two rows
 
 
-        main_df = main_df[['Round', val]]  # Select the 'Round' and the specified value column
-        main_df.columns = ['Round', val]   # Rename the columns for clarity
+        # main_df = main_df[['Round', val]]  # Select the 'Round' and the specified value column
+        # main_df.columns = ['Round', val]   # Rename the columns for clarity
+
+        # # st.write(main_df)
+
+        # main_df['Round'] = pd.to_numeric(main_df['Round'])
+        # main_df[val] = pd.to_numeric(main_df[val])
+
+        # # st.write(main_df)
+
+        # if val == "ROI":
+        #     main_df[val] = pd.to_numeric(main_df[val])*100
+    
+        # # Generate a random color sequence
+        # # color_palette = random.sample(px.colors.qualitative.Plotly, 4)
+
+        # fig = px.line(
+        #     main_df, 
+        #     x='Round', 
+        #     y=val, 
+        #     title=f'{val} over Rounds', 
+        #     # color_discrete_sequence=color_palette,
+        #     line_shape = 'linear',
+        # )
+
+        
+        # fig.update_layout(height=300)
+        # fig.update_xaxes(tickvals=sorted(main_df['Round']))
+
+        # fig.update_traces(line=dict(width=4, color = 'orange'), mode='lines+markers', marker=dict(size=8, color = 'grey'))
+
+        # st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
+
+        main_df = FINANCE_DF.copy().T.reset_index()
+        main_df.columns = main_df.iloc[0]
+        main_df = main_df.drop(0)
+
+        main_df = main_df[['Round', val]]
+        main_df.columns = ['Round', val]
 
         # st.write(main_df)
 
         main_df['Round'] = pd.to_numeric(main_df['Round'])
         main_df[val] = pd.to_numeric(main_df[val])
 
-        # st.write(main_df)
-
         if val == "ROI":
-            main_df[val] = pd.to_numeric(main_df[val])*100
-    
-        # Generate a random color sequence
-        # color_palette = random.sample(px.colors.qualitative.Plotly, 4)
+            main_df[val] = main_df[val] * 100
 
         fig = px.line(
             main_df, 
             x='Round', 
             y=val, 
-            title=f'{val} over Rounds', 
-            # color_discrete_sequence=color_palette,
-            line_shape = 'linear',
+            title=f'{val} over Rounds',
+            line_shape='linear',
         )
 
-        
         fig.update_layout(height=300)
         fig.update_xaxes(tickvals=sorted(main_df['Round']))
+        fig.update_traces(line=dict(width=4, color='orange'), mode='lines+markers', marker=dict(size=8, color='grey'))
 
-        fig.update_traces(line=dict(width=4, color = 'orange'), mode='lines+markers', marker=dict(size=8, color = 'grey'))
+        # Annotations with rounded values
+        annotations = []
+        for i, row in main_df.iterrows():
+            value_text = f"<b>{row[val]:.1f}</b>"  # Formatting the value to one decimal place
+            annotations.append(
+                dict(
+                    x=row['Round'],
+                    y=row[val],
+                    xref='x',
+                    yref='y',
+                    text=value_text,
+                    showarrow=False,
+                    font=dict(size=12),
+                    xanchor='center',
+                    yanchor='bottom',
+                    yshift=10
+                )
+            )
+
+        fig.update_layout(annotations=annotations)
 
         st.plotly_chart(fig, theme = "streamlit", use_container_width=True)
 
