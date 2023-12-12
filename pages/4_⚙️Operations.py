@@ -302,7 +302,7 @@ def warehouse_info_section():
         )
 
 
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
             "Overview",
             "Round -2",
             "Round -1",
@@ -311,7 +311,8 @@ def warehouse_info_section():
             "Round 2",
             "Round 3",
             "Round 4",
-            "Round 5"
+            "Round 5",
+            "Round 6"
     ])
 
  
@@ -547,6 +548,27 @@ def warehouse_info_section():
         with col3:
             plot_cube_util_gauge(5,'Finished goods warehouse')
 
+    with tab10:
+        
+        # Cube utilization text
+        st.markdown(
+            f"""
+            <div class="column1" style="background-color: #e9ecef; text-align: center; border-radius: 10px; padding: 0;">
+                <div style="margin-bottom: -15px;"><h4 style = "color: black;">Cube utilization (%) | Round 6</h4></div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        col1, col2, col3 = st.columns(3, gap = "small")
+
+        with col1:
+            plot_cube_util_gauge(6,'Raw materials warehouse')
+        with col2:
+            plot_cube_util_gauge(6,'Tank yard')
+        with col3:
+            plot_cube_util_gauge(6,'Finished goods warehouse')
+
 
 def mixers_fillers_section():
     st.divider()
@@ -644,7 +666,7 @@ def mixers_fillers_section():
 
     with col1:
         
-        tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
+        tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
                 "Round -2",
                 "Round -1",
                 "Round 0",
@@ -653,6 +675,7 @@ def mixers_fillers_section():
                 "Round 3",
                 "Round 4",
                 "Round 5",
+                "Round 6"
 
         ])
         
@@ -681,6 +704,9 @@ def mixers_fillers_section():
 
         with tab8:
             plot_bottling_line_usage(5, 'AllFill 1')
+
+        with tab9:
+            plot_bottling_line_usage(6, 'AllFill 1')
 
     with col2:
         plot_avg_lot_size_per_round()

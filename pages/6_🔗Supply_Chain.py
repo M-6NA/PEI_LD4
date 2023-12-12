@@ -41,7 +41,7 @@ def read_table_tabs(tab_name):
 COMPONENT_DF = read_table_tabs('Component')
 PRODUCTS_DF = read_table_tabs('Product')
 FINANCE_DF = pd.read_excel('Data/FinanceReport.xlsx')
-ROUND_TEXT = ['-2', '-1', '0', '1', '2', '3', '4', '5']
+ROUND_TEXT = ['-2', '-1', '0', '1', '2', '3', '4', '5', '6']
 
 # with st.expander(f"Finances Table"):
 #     st.write(FINANCE_DF)
@@ -289,7 +289,7 @@ def components_section():
         
         data = {
             'rounds': ROUND_TEXT,
-            'values': [6.5, 6.5, 6.5, 5.0, 8.9, 7.0, 4.1, 4.0],
+            'values': [6.5, 6.5, 6.5, 5.0, 8.9, 7.0, 4.1, 4.0, 3.9],
         }
 
         # Create a trace for the line chart
@@ -695,7 +695,7 @@ def production_section():
         
         data = {
             'rounds': ROUND_TEXT,
-            'values': [3.6, 3.8, 3.8, 3.4, 2.3, 1.7, 1.1, 2.3],
+            'values': [3.6, 3.8, 3.8, 3.4, 2.3, 1.7, 1.1, 2.3, 2.2],
         }
 
         # Create a trace for the line chart

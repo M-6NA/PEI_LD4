@@ -74,7 +74,7 @@ def generic_section():
 
         main_df = FINANCE_DF.copy().T.reset_index()
         main_df.columns = main_df.iloc[0]
-        main_df = main_df.drop(0)
+        main_df = main_df.drop(0) 
 
         main_df = main_df[['Round', val]]
         main_df.columns = ['Round', val]
